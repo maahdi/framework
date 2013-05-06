@@ -6,3 +6,4 @@ $routes['login'] = 'login/connexion';
 $routes['deconnex'] = 'deconnex/connexion';
 $routes['connex'] = 'connexion/connexion';
 $routes['gestionStock'] = 'renderStock/stock';
+$routes['gestionClient'] = 'renderListeClient/client';

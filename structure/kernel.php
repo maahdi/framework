@@ -10,6 +10,7 @@ class Kernel{
         //qui corresponde aux actions
         $this->bundles['connexion'] = 'ConnexionController';
         $this->bundles['stock'] = 'StockController';
+        $this->bundles['client'] = 'ClientController';
         
         if (isset($_GET['action'])){
             $action = $_GET['action'];  
