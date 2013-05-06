@@ -6,19 +6,18 @@ class ConnexionController extends Controller{
     private $modele;
     
     public function __construct(){
-        parent::__construct();
+       parent::__construct();
        $this->modele = new ConnexionModele();
     }
     
     public function login(){
         $this->view->render(_DIR_.'Projet/connexion/layout/login.php');
     }
+    
     public function connexion(){
         $identifiant[0] = $_POST['login'];
         $identifiant[1] = $this->hashPassword($_POST['password']);
-        $resultat = $this->modele->getTable(array('*'), array('utilisateurs'), $identifiant,
-                                    array('login','password'));
-        if ($resultat->rowCount() ==1){
+        if ($this->modele->testIdentifiant($identifiant)){
             SessionPerso::setSession($identifiant[0], $identifiant[1]);
             $_SESSION['access'] = true;
             $this->view->setSubmenu('menuAccueil');
@@ -27,14 +26,14 @@ class ConnexionController extends Controller{
             $_SESSION['access']= false;
             $this->view->setAction('fail');
             $this->login();
-        }
+        }        
     }
     
     public function deconnex(){
         $this->destroySession();
     }
     
-    public function hashPassword($password){
+    private function hashPassword($password){
         return Config::hashPassword($password);
     }
 }

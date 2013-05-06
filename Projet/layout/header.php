@@ -44,7 +44,7 @@
                   echo '<li><a href="'._LIENDIR_.'structure/main.php?action=accueil">Accueil</a></li>';
                   echo '<li><a href="'._LIENDIR_.'structure/main.php?action=afficheListeClient">Gestion des clients</a></li>';
                   echo '<li><a href="'._LIENDIR_.'structure/main.php?action=menuGestionCommandes">Gestion des Commandes</a></li>';
-                  echo '<li><a href="'._LIENDIR_.'structure/main.php?action=afficheListeArticle">Gestion du stock</a></li>';
+                  echo '<li><a href="'._LIENDIR_.'structure/main.php?action=gestionStock">Gestion du stock</a></li>';
                   echo '<li><a id="boutonDeconnex" href="'._LIENDIR_.'structure/main.php?action=deconnex">Déconnexion</a></li>';
                   echo '</ul></div></div>';
                   if (!isset($this->erreur)){

@@ -9,7 +9,7 @@ class Kernel{
         //Mettre en indice le nom des dossiers
         //qui corresponde aux actions
         $this->bundles['connexion'] = 'ConnexionController';
-        $this->bundles['article'] = 'ArticleController';
+        $this->bundles['stock'] = 'StockController';
         
         if (isset($_GET['action'])){
             $action = $_GET['action'];  

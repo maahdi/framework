@@ -2,10 +2,13 @@
 
 class Controller{
     protected $view;
+    protected $repository;
     
     public function __construct(){
         include _DIR_.'structure/view.php';
         $this->view = new View();
+        include _DIR_.'structure/repositoryFinder.php';
+        $this->repository = new RepositoryFinder();
     }           
     
     public function destroySession(){
@@ -47,5 +50,9 @@ class Controller{
         $fh = fopen($fichier,'a');
         ftruncate($fh, filesize($fichier));
         fclose($fh);
+    }
+    
+    public function getRepository($repo){
+        return $this->repository->getRepo($repo);
     }
 }

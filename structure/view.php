@@ -1,11 +1,12 @@
 <?php
 
 class View{
-         public $droit;
-         public $data = array();
-         public $action;
-         public $menuGauche = false;
-         public $erreur;
+    
+         private $droit;
+         private $data = array();
+         private $action;
+         private $menuGauche = false;
+         private $erreur;
          
 	public function render($url,array $data = null){
             if ($data != null){
@@ -15,7 +16,15 @@ class View{
                 }
             }
             include ($url);
-	}
+	}        
+        
+        public function generateFichier($fichier, $bundle){
+            include _DIR_.'Projet/'.$bundle.'/layout/'.$fichier.'.php';
+        }
+        
+        public function getData($index){
+            return $this->data[$index];
+        }
         
         //Sert a afficher message erreur dans login.php
         public function setAction($action){

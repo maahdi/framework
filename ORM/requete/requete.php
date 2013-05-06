@@ -10,9 +10,11 @@ class Requete{
     
     
     
-    public function __construct($commande) {
+    public function __construct($commande = null) {
         $this->mysql = DB::getInstance();
-        $this->requete = $commande." ";
+        if ($commande != null){
+            $this->requete = $commande." ";
+        }
     }
     
     public function resetRequete(){

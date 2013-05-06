@@ -2,9 +2,9 @@
 include _DIR_."ORM/requete/requete.php";
 
 class Modele{
-    public function __construct() {
-        
+    public function __construct(){
     }
+    
     public function getTable(array $listeChamps, array $listeTable, array $whereSearch = null, array $where = null){
         $requete = new Requete('select');
         $requete->setListePart($listeChamps);
@@ -17,7 +17,6 @@ class Modele{
         }else{
             return $requete->query();
         }
-        
     }
     
     public function updateTable(array $listeChamps, array $listeValeur, $whereSearch, $table, $where){
@@ -27,5 +26,9 @@ class Modele{
         $requete->setListePart($listeValeur,' values (',')');
         $requete->addWherePart($where, $whereSearch);
         $requete->query();
+    }
+    
+    public function getRequete($commande){
+        return new Requete($commande);
     }
 }
