@@ -65,12 +65,18 @@ class Requete{
     public function toString(){
             return $this->requete;
     }
-    
-    public function addWherePart($champ,$valeur){
-        if ($this->wherePart == "where "){
+   //$choix : null pour le premier après on choisi and ou or 
+    public function addWherePart($champ,$valeur,$choix = null){
+        if (!($valeur == '?')){
+            $valeur = '\''.$valeur.'\'';
+        }
+        if ($choix == null){
+            $choix ='and';
+        }
+        if ($this->wherePart == 'where '){
             $this->wherePart = $this->addEgal($champ, $valeur, $this->wherePart);
         }else{
-            $this->wherePart = " and ";
+            $this->wherePart = ' '.$choix.' ';
             $this->wherePart = $this->addEgal($champ, $valeur, $this->wherePart);
         }
         $this->requete .= $this->wherePart." ";

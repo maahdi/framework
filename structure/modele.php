@@ -14,6 +14,7 @@ class Modele{
                 $requete->addWherePart($champ, '?');
             }
             return $requete->queryPrepare($whereSearch);
+
         }else{
             return $requete->query();
         }

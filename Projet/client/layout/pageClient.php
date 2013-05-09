@@ -4,10 +4,21 @@ include (_DIR_.'Projet/layout/header.php');
 <div id="Page">
 
     <?php
-    if (isset($_GET['idClient']) && $_REQUEST['action'] == 'afficheListeClient' && !isset($_REQUEST['ajoutClient'])){
-        echo $this->generateFichier('formuModifClient');
-    }elseif (isset($_GET['ajoutClient']) && $_GET['ajoutClient'] == "true"){
-        echo $this->generateFichier('formuAjoutClient');
+    if ($this->getData('liste')){
+        $this->generateFichier('listeClient', 'client');
+    }elseif ($this->getData('nouveau')){
+        $this->generateFichier('nouveauClient', 'client');
+    }elseif ($this->getData('advancedSearch')){
+        $this->generateFichier('advancedSearch','client');
+    }
+
+
+
+
+//    if (isset($_GET['idClient']) && $_REQUEST['action'] == 'afficheListeClient' && !isset($_REQUEST['ajoutClient'])){
+//        echo $this->generateFichier('formuModifClient');
+//    }elseif (isset($_GET['ajoutClient']) && $_GET['ajoutClient'] == "true"){
+//        echo $this->generateFichier('formuAjoutClient');
 //    }
 //    elseif ($_REQUEST['action'] == 'ajoutCommandeClient') {
 //        if (!isset($_REQUEST['idClient'])){
@@ -23,11 +34,11 @@ include (_DIR_.'Projet/layout/header.php');
 //        }
 //        
     
-    }elseif ($_REQUEST['action'] == 'ajoutArticleCommandeClient'){
-        echo $this->generateFichier('ajoutCommande');
-    }else{
-        echo $this->generateFichier('listeClient','client');
-    }
+    //}elseif ($_REQUEST['action'] == 'ajoutArticleCommandeClient'){
+    //    echo $this->generateFichier('ajoutCommande');
+    //}else{
+        //echo $this->generateFichier('listeClient','client');
+    //}
     
     ?>
     

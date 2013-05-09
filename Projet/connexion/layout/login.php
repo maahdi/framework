@@ -16,7 +16,7 @@ switch ($this->action){
 ?>
     <article class="formulaire">
         <h1 >Entrez vos identifiants</h1>
-<?php echo '<form method="POST" action="'._LIENDIR_.'structure/main.php?action=connex">';?>
+<?php echo '<form method="POST" action="'._LIENDIR_.'connex">';?>
         
     <fieldset>
         <br><ul>

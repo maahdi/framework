@@ -6,7 +6,10 @@ include (_DIR_.'Projet/layout/header.php');
     
 <?php
 // on pourrait utiliser cette page pour afficher plusieurs parties
-echo $this->generateFichier('tableauStock','stock');
+if ($this->getData('tableauStock')){
+    echo $this->generateFichier('tableauStock','stock');
+}
+
 ?>
     
 </div>

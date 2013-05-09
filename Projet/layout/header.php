@@ -41,11 +41,11 @@
         <?php   
             if (isset($_SESSION['access']) && $_SESSION['access'] == true){
                 echo '<div id="fond_menu"><div id="menu"><ul>';
-                  echo '<li><a href="'._LIENDIR_.'structure/main.php?action=accueil">Accueil</a></li>';
-                  echo '<li><a href="'._LIENDIR_.'structure/main.php?action=gestionClient">Gestion des clients</a></li>';
-                  echo '<li><a href="'._LIENDIR_.'structure/main.php?action=gestionCommandes">Gestion des Commandes</a></li>';
-                  echo '<li><a href="'._LIENDIR_.'structure/main.php?action=gestionStock">Gestion du stock</a></li>';
-                  echo '<li><a id="boutonDeconnex" href="'._LIENDIR_.'structure/main.php?action=deconnex">Déconnexion</a></li>';
+                  echo '<li><a href="'._LIENDIR_.'accueil">Accueil</a></li>';
+                  echo '<li><a href="'._LIENDIR_.'gestionClient">Gestion des clients</a></li>';
+                  echo '<li><a href="'._LIENDIR_.'facturation">Facturation</a></li>';
+                  echo '<li><a href="'._LIENDIR_.'gestionStock">Gestion du stock</a></li>';
+                  echo '<li><a id="boutonDeconnex" href="'._LIENDIR_.'deconnex">Déconnexion</a></li>';
                   echo '</ul></div></div>';
                   if (!isset($this->erreur)){
                       echo $this->getMenu();
