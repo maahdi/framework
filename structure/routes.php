@@ -13,3 +13,7 @@ $routes['searchClient'] = 'search/client';
 $routes['renderAdvancedSearchClient'] = 'renderAdvancedSearch/client';
 $routes['advancedSearchClient'] = 'advancedSearch/client';
 $routes['creationClient'] = 'enregistrerClient/client';
+$routes['facturation'] = 'renderAccueilFacturation/client';
+$routes['accueil'] = 'renderAccueil/client';
+$routes['deleteClient'] = 'deleteClient/client';
+$routes['modifClient'] = 'modifClient/client';

@@ -7,6 +7,7 @@ class ClientController extends Controller{
     public function __construct() {
         parent::__construct();
         include _DIR_.'Projet/client/modele/clientModele.php';
+        include _DIR_.'structure/formValidation.php';
         $this->modele = new ClientModele();
         $this->view->setData(array('nouveau' => false, 'liste' => false, 'advancedSearch' => false, 'newSearch' => false));
         $this->view->setSubmenu('menuClient');
@@ -75,20 +76,41 @@ class ClientController extends Controller{
 
     public function renderNouveauClientForm(){
         $data = $this->getLastId();
+        if (is_file(_DIR_.'Projet/serialized/dataErreur.txt')){
+            $this->deleteFichier(_DIR_.'Projet/serialized/dataErreur.txt');
+        }
         $data['nouveau'] = true;
         $this->view->setData($data);
         $this->view->render($this->url);
     }
 
     public function enregistrerClient(){
-        $pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays');
-        if ($pays == false){
-            // insertion du nouveau pays
+        $c = new FormValidation(array('idClient'=> 'numeric', 'nomClient' => 'texte','cpClient' => 'numeric', 'prenomClient' => 'texte', 'adresseClient' => 'texte', 'nomPays'=> 'texte'), $_POST, $this);
+        if ($this->getFormValid()){
+            $pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays');
+            if ($pays == false){
+                // insertion du nouveau pays
+            }else{
+                $data['listeClient'] = $this->getRepository('clients')->insertOne(array($_POST['idClient'],$_POST['nomClient'],$_POST['prenomClient'], $_POST['adresseClient'],$_POST['cpClient'], $pays[1]->getIdPays()),$pays);
+            }
+            unset($pays);
+            $this->view->setData(array('liste' => true));
+            $this->view->render($this->url, $data);
         }else{
-            $data['listeClient'] = $this->getRepository('clients')->insertOne(array($_POST['idClient'],$_POST['nomClient'],$_POST['prenomClient'], $_POST['adresseClient'],$_POST['cpClient'], $pays[1]->getIdPays()),$pays);
+            $this->view->setData($_POST);
+            $this->view->setData(array('nouveau' => true));
+            $this->view->render($this->url,$this->getLastId());
         }
-        $this->view->setData(array('liste' => true));
-        $this->view->render($this->url, $data);
+    }
+
+    public function deleteClient(){
+        $client = $this->getRepository('clients')->getOne($_GET['idClient']);
+        $this->modele->deleteOneClient($client);
+        $this->view->setData(array('listeClient' => array($client->getIdClient() => $client),'liste' => true));
+        $this->view->render($this->url);
+    }
+
+    public function modifClient(){
     }
 
     private function getLastId(){

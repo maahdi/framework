@@ -1,35 +1,33 @@
 <h1>Ajouter un client</h1> 
 <article class="formulaire">
         <?php 
-//        if (isset($this->getData('lastId')){
             $key = $this->getData('lastId');
-//        }
-
-        echo "<form method='POST' action='"._LIENDIR_."creationClient'>";
-               echo "<fieldset>";
-                echo "<ul>";
-                     echo   "<h1>Client n° ".$key."</h1>";
-                          echo "</ul><br><br>";
-                  echo "<ul>";
-                        echo "<label for='nomClient'>Nom</label>";
-                        echo "<input type='text' name='nomClient'>";
-                        echo "</ul>";
-                  echo "<ul>"; 
-                        echo "<label for='prenomClient'>Prenom</label>";
-                        echo "<input type='text' name='prenomClient'>";
-                        echo "</ul>";
-                 echo "<ul>";  
-                        echo "<label for='adresseClient'>Adresse</label>";
-                        echo "<input type='text' name='adresseClient'>";
-                        echo "</ul>";
-                  echo "<ul>";  
-                        echo "<label for='cpClient'>Code Postal</label>";
-                        echo "<input type='text' name='cpClient' >";
-                        echo "</ul>";
-                        echo "<ul><label for='nomPays'>Pays</label>";
-                //  if (!isset($_REQUEST['selectPays'])){
-                        echo "<input type='text' name='nomPays'></ul>";
-                  //  }else{
+ echo '<form method=\'POST\' action=\''._LIENDIR_.'creationClient\'>';?>
+               <fieldset>
+                <ul>
+<?php echo '<h1>Client n° '.$key.'</h1>'; ?>
+                </ul><br><br>
+                <ul>
+                    <label for='nomClient'>Nom</label>
+                    <input type='text' name='nomClient' value='<?php echo ($this->getData('nomClient') != false)?  $this->getData('nomClient'):'';?>'>
+                </ul>
+                <ul> 
+                    <label for='prenomClient'>Prenom</label>
+                    <input type='text' name='prenomClient' value='<?php echo ($this->getData('prenomClient') != false)?  $this->getData('prenomClient'):'';?>'>
+                </ul>
+                <ul>  
+                    <label for='adresseClient'>Adresse</label>
+                    <input type='text' name='adresseClient' value='<?php echo ($this->getData('adresseClient') != false)?  $this->getData('adresseClient'):'';?>'>
+                </ul>
+                <ul>  
+                    <label for='cpClient'>Code Postal</label>
+                    <input type='text' name='cpClient' value='<?php echo ($this->getData('cpClient') != false)?  $this->getData('cpClient'):'';?>' >
+                </ul>
+                <ul>
+                    <label for='nomPays'>Pays</label>
+                    <input type='text' name='nomPays' value='<?php echo ($this->getData('nomPays') != false)? $this->getData('nomPays'):'';?>'>
+                </ul>
+                 <!-- //  }else{
                   //      echo "<input type='text' name='nomPays' value='".$_REQUEST['selectPays']."'></ul>";
                   //  }
               // echo "<ul><label></label>";
@@ -39,13 +37,12 @@
                   //  foreach ($this->listePays as $valeur){
                     //    echo "<option value='".$valeur->nomPays."'>".$valeur->nomPays."</option>";
                    // }
-                //echo "</select></ul>";
-                  echo "<ul>";  
-                    echo "<input type='submit' value='Créer'>";
-                    echo "<input type='reset' value='Reset'>";
-                    echo "<input type='hidden' name='idClient' value='".$key."'>";
-                    echo "</ul>";
-                echo "</fieldset></form>";
+                //echo "</select></ul>";-->
+                     <ul>  
+                    <input type='submit' value='Créer'>
+                    <input type='reset' value='Reset'>
+<?php echo '<input type=\'hidden\' name=\'idClient\' value=\''.$key.'\'>';?>
+                    </ul>
+                </fieldset></form>
                 
-        ?>
- </article>
+        </article>

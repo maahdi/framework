@@ -21,6 +21,15 @@ class ClientsRepository extends Repository{
         }
     }
 
+    public function getOne($whereSearch){
+        $resultat = $this->findBy('clients','idClient',$whereSearch);
+        foreach ($resultat as $valeur){
+            $client = new Clients($valeur->idClient, $valeur->nomClient,
+                    $valeur->prenomClient, $valeur->adresseClient, $valeur->cpClient, $pays[$valeur->idPays]);
+        }
+        return $client;
+    }
+
     public function insertOne(array $values, $pays){
         $requete = new Requete('insert into');
         $requete->setListePart(array('clients'));

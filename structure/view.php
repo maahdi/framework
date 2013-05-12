@@ -7,7 +7,6 @@ class View{
     private $data = array();
     private $action;
     private $menuGauche = false;
-    private $erreur;
 
     public function render($url,array $data = null){
         $this->setData($data);
@@ -19,7 +18,11 @@ class View{
     }
 
     public function getData($index){
-        return $this->data[$index];
+        if (isset($this->data[$index])){
+            return $this->data[$index];
+        }else{
+            return false;
+        }
     }
 
     //Sert a afficher message erreur dans login.php
@@ -39,10 +42,11 @@ class View{
     public function turnSearchBarOff(){
         $this->search = false;
     }
+
     public function renderErrorAction(){
-        $this->erreur = "Erreur 403";
-        include (_DIR_.'Projet/erreur/erreur.php');
+        $this->render(_DIR_.'Projet/erreur/erreur.php');
     }
+
     public function setData($data){
         if ($data != null){
             $key = array_keys($data);                          

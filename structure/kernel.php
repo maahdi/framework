@@ -2,6 +2,7 @@
 include_once _DIR_.'utils/config.php';
 include_once _DIR_.'utils/sessions.php';
 
+
 class Kernel{
     private $bundles = array();
     public function __construct(){
@@ -29,7 +30,12 @@ class Kernel{
         $exp = explode("/", $routes[$action]);
         include _DIR_."Projet/".$exp[1]."/controller/".$exp[1]."Controller.php";
         $controller = new $this->bundles[$exp[1]]();
-        $controller->$exp[0]();
+        try{
+            $controller->$exp[0]();
+        }catch(PDOException $mess){
+            $controller->renderErrorAction($mess);
+        }
+
         
     }
 

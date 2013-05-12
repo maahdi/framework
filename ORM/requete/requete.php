@@ -27,6 +27,14 @@ class Requete{
     }
     public function queryPrepare(array $valeur){
         $this->pdostatement = $this->mysql->prepare($this->requete);
+        $nb = count($valeur);
+        $i = 0;
+        while ($i < $nb){
+            if ($valeur[$i] == null){
+                $valeur[$i] = '';
+            }
+            $i++;
+        }
         $this->pdostatement->execute($valeur);
         $this->setFetchModObj();
         return $this->pdostatement;

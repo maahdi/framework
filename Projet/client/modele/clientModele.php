@@ -14,4 +14,11 @@ class ClientModele extends Modele{
         return $id;
     }
 
+    public function deleteOneClient($client){
+        $requete = new Requete('delete');
+        $requete->setFromPart(array('client'));
+        $requete->addWherePart('idClient','?');
+        $requete->queryPrepare(array($client->getIdClient()));
+    }
+
 }
