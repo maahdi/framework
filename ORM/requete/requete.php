@@ -7,9 +7,8 @@ class Requete{
     private $requete="";
     private $pdostatement=true;
     
-    
-    
-    
+    //On peut appeler Requete en spécifiant une commande SQL ou non
+    //Met l'objet PDOStatement en mode objet;
     public function __construct($commande = null) {
         $this->mysql = DB::getInstance();
         if ($commande != null){
@@ -25,10 +24,12 @@ class Requete{
     public function setfromPart(array $liste){
         $this->requete .= " from ".$this->addVirgule($liste);
     }
+
     public function queryPrepare(array $valeur){
         $this->pdostatement = $this->mysql->prepare($this->requete);
         $nb = count($valeur);
         $i = 0;
+        //Boucle servant à mettre une valeur par défault s'il n'y as rien a enregistrer
         while ($i < $nb){
             if ($valeur[$i] == null){
                 $valeur[$i] = '';

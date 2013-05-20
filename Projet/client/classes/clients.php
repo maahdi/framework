@@ -38,8 +38,15 @@ class Clients{
         return $this->cpClient;
     }
 
+    public function setPays($pays){
+        $this->pays = $pays;
+    }
+
     public function getNomPays(){
         return $this->pays->getNomPays();
+    }
+    public function getIdPays(){
+        return $this->pays->getIdPays();
     }
 
     public function setIdClient($foo){
@@ -56,7 +63,5 @@ class Clients{
     }
     public function setCpClient($foo){
         $this->cpClient = $foo;
-    }
-    public function setPays($foo){
     }
 }

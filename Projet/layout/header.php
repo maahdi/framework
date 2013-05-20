@@ -47,7 +47,7 @@
                   echo '<li><a href="'._LIENDIR_.'gestionStock">Gestion du stock</a></li>';
                   echo '<li><a id="boutonDeconnex" href="'._LIENDIR_.'deconnex">Déconnexion</a></li>';
                   echo '</ul></div></div>';
-                  if (!isset($this->erreur)){
+                  if (!(isset($this->erreur) and $this->getMenu() != false)){
                       echo $this->getMenu();
                   }
               }

@@ -1,24 +1,15 @@
 var editionEnCours = false;
-//function modifOneStock(id, obj, nomValeur, type, indiceLigne, operateur){
-//    if (editionEnCours){
-//        return false;
-//    }else{
-//        editionEnCours = true;
-//    }
-//     if (obj.innerText){
-//        valeur = obj.innerText;
-//    }else{
-//        valeur = obj.textContent;
-//    }
-//    switch (operateur){
-//        case '+':
-//            sauverMod(id, obj, nomValeur, valeur+1, type, indiceLigne);
-//            break;
-//        case '-':
-//            sauverMod(id, obj, nomValeur, valeur-1, type, indiceLigne);
-//            break;
-//    }
-//}
+
+function inlineModSelect(id, obj, nomValeur, type, indiceLigne, table){
+    if (editionEnCours){
+        return false;
+    }else{
+        editionEnCours = true;
+    }
+    sauverMod(id, obj, nomValeur, obj.options[obj.selectedIndex].value, type, indiceLigne, table, true);
+
+}
+
 function inlineMod(id, obj, nomValeur, type, indiceLigne, table){
     if (editionEnCours){
         return false;
@@ -56,7 +47,7 @@ function inlineMod(id, obj, nomValeur, type, indiceLigne, table){
     input.focus();
     input.select();
     input.onblur = function sortir(){
-		sauverMod(id, obj, nomValeur, input.value, type, indiceLigne, table);
+		sauverMod(id, obj, nomValeur, input.value, type, indiceLigne, table, false);
 		delete input;
 	};
 
@@ -66,7 +57,7 @@ function inlineMod(id, obj, nomValeur, type, indiceLigne, table){
             event = window.event;
         }
         if(getKeyCode(event) == 13){
-            sauverMod(id, obj, nomValeur, input.value, type, indiceLigne, table);
+            sauverMod(id, obj, nomValeur, input.value, type, indiceLigne, table, false);
             delete input;
         }
     };
@@ -167,7 +158,7 @@ function getXMLHTTP()
 var XHR = null;
 
 //Fonction de sauvegarde des modifications apportées
-function sauverMod(id, obj, nomValeur, valeur, type, indiceLigne, table)
+function sauverMod(id, obj, nomValeur, valeur, type, indiceLigne, table, select)
 {
 	//Si on a déjà sauvé la valeur en cours, on sort
 //	if(sauve)
@@ -195,13 +186,13 @@ function sauverMod(id, obj, nomValeur, valeur, type, indiceLigne, table)
 	}
         
         //URL du script de sauvegarde auquel on passe la valeur à modifier
-	XHR.open("POST", "main.php", true);
+	XHR.open("POST", "main.php?action=enregistrerAjax", true);
         XHR.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 	//On se sert de l'événement OnReadyStateChange pour supprimer l'input et le replacer par son contenu
 	
 
 	//Envoi de la requête avec les données en post
-	XHR.send("action=enregistrer&ajax=true&id=" + id + "&champ=" + nomValeur + "&valeur=" + escape(valeur) 
+	XHR.send("id=" + id + "&champ=" + nomValeur + "&valeur=" + escape(valeur) 
                     + "&table=" + table + "&type=" + type + ieTrick());
         XHR.onreadystatechange = function()
 	{
@@ -213,9 +204,12 @@ function sauverMod(id, obj, nomValeur, valeur, type, indiceLigne, table)
                 //Réinitialisation de la variable d'état d'édition
                 editionEnCours = false;
                 //Remplacement de l'input par le texte qu'il contient
-                obj.replaceChild(document.createTextNode(valeur), obj.firstChild);
-                if (XHR.responseText){
-                    readData(XHR.responseText, sel);
+                if (!select){
+                    obj.replaceChild(document.createTextNode(valeur), obj.firstChild);
+                    if (XHR.responseText){
+                        readData(XHR.responseText, sel);
+                    }
+
                 }
                 
             }

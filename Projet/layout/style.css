@@ -59,7 +59,7 @@ body{
     -webkit-border-radius: 8px;
     border-radius: 8px;
     border: 1px solid #e3e3e3;
-    background: white url('../../../images/fleche.gif') no-repeat scroll 1px 50%;
+    background: white url('images/fleche.gif') no-repeat scroll 1px 50%;
     background-position : right;
     padding:5px 1px 5px 10px;
     font-family: Verdana, Arial,Helvetica, sans-serif;
@@ -68,6 +68,7 @@ body{
     background-color: #fff;
     border: 1px solid #999999;
 }
+
 #notfound{
     position: relative;
     margin-left: auto;
@@ -78,11 +79,13 @@ body{
 #notfound h2{
     text-align: center;
 }
+
 #notfound a{
     text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
+
 #ok{
     background-color: #595959;
     font-size: 10px;
@@ -95,6 +98,7 @@ body{
     cursor: pointer;
     padding: 1px;
 }
+
 #menu{
     float:left;
     z-index:100;
@@ -117,7 +121,7 @@ body{
 }
 
 #menu ul li {
-    background: url("../../../images/separateur.jpg") no-repeat left 0px;
+    background: url("images/separateur.jpg") no-repeat left 0px;
 }
 .top_link{
    
@@ -460,7 +464,7 @@ h1{
 }
 
 #navigationGauche ul li {
-    background: url("../../../images/separateur3.jpg") no-repeat left 0px;
+    background: url("images/separateur3.jpg") no-repeat left 0px;
 }
 
 #navigationGauche ul li:first-child {

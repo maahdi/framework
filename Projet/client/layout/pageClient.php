@@ -11,7 +11,9 @@ include (_DIR_.'Projet/layout/header.php');
     }elseif ($this->getData('advancedSearch')){
         $this->generateFichier('advancedSearch','client');
     }
-
+if ($this->getData('modif')){
+    $this->generateFichier('modifClient','client');
+}
 
 
 

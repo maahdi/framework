@@ -16,9 +16,26 @@ class ClientModele extends Modele{
 
     public function deleteOneClient($client){
         $requete = new Requete('delete');
-        $requete->setFromPart(array('client'));
+        $requete->setFromPart(array('clients'));
         $requete->addWherePart('idClient','?');
         $requete->queryPrepare(array($client->getIdClient()));
+    }
+
+    public function updateOneClient($client){
+        $requete = new Requete('update');
+        $requete->setListePart(array('set nomClient = ?',
+                                     'prenomClient = ?',
+                                     'adresseClient = ?',
+                                     'cpClient = ?',
+                                     'idPays = ?'),'clients');
+        $requete->addWherePart('idClient', '?');
+        $requete->queryPrepare(array($client->getNomClient(),
+                                     $client->getPrenomClient(),
+                                     $client->getAdresseClient(),
+                                     $client->getCpClient(),
+                                     $client->getIdPays(),
+                                     $client->getIdClient()));
+        
     }
 
 }

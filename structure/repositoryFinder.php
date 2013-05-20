@@ -1,5 +1,7 @@
 <?php
 
+//Retourne le repository que l'on cherche
+//Les repos sont enregistrés ici au préalable
 class RepositoryFinder{
     private $repo;
     
@@ -11,7 +13,7 @@ class RepositoryFinder{
     }
     
     public function getRepo($name){
-        include $this->repo[$name];
+        include_once $this->repo[$name];
         $repoName = ucfirst($name).'Repository';
         return new $repoName();
     }

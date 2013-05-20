@@ -15,6 +15,7 @@ class Controller{
         }
     }           
 
+    //Fontions à utiliser si on utilise la classe FormValidation
     public function setFormValid($c){
         $this->formValid = $c; 
     }
@@ -43,16 +44,22 @@ class Controller{
         $this->view->setData($data);
     }
 
+    //Vrai ou faux selon table utilisateurs
+    //Ne gère pas de différence de niveau d'accès entre utilisateurs
     public function setAccess($message){
         $this->view->setAccess($message);
     }
 
+    //Fonction appelée dans __construct() si il s'agit d'un retour d'erreur de formulaire
     public function restoreDataFromError(){
         $data = $this->unserializedObjet(_DIR_.'Projet/serialized/dataErreur.txt');
         unlink(_DIR_.'Projet/serialized/dataErreur.txt');
         return $data;
     }
 
+    //Fonction en cas d'erreur
+    //Si on vien d'un formulaire, elle enregistre les données dans un fichier
+    //Et selon le type d'erreur renvoie un message spécifique ou non
     public function renderErrorAction($erreur){
         if (isset($_POST)){
             $this->serializedObjet(_DIR_.'Projet/serialized/dataErreur.txt', $_POST, 'w');
@@ -63,7 +70,7 @@ class Controller{
                 Le numéro d\'identification est déjà présent dans la base de données !!!'));
             break;
         default:
-            $this->view->setData(array('messageErreur' => $erreur->getCode()));
+            $this->view->setData(array('messageErreur' => $erreur->getMessage()));
             break;
         }
         $this->view->renderErrorAction();
@@ -93,6 +100,7 @@ class Controller{
         fclose($fh);
     }
 
+    //Fonction d'accès aux repositorys accessible a tous les controlleurs
     public function getRepository($repo){
         return $this->repository->getRepo($repo);
     }

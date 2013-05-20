@@ -2,7 +2,7 @@
 $routes = array();
 //En indice la valeur de la variable action
 //Affecter ensuite nom fonction appelée et le bundle séparé par un "/"
-//bundle =nom du dossier du module dans le dossier 'Projet'
+//'$routes['action'] = nomDeLaFonction/bundle'
 $routes['login'] = 'login/connexion';
 $routes['deconnex'] = 'deconnex/connexion';
 $routes['connex'] = 'connexion/connexion';
@@ -16,4 +16,9 @@ $routes['creationClient'] = 'enregistrerClient/client';
 $routes['facturation'] = 'renderAccueilFacturation/client';
 $routes['accueil'] = 'renderAccueil/client';
 $routes['deleteClient'] = 'deleteClient/client';
-$routes['modifClient'] = 'modifClient/client';
+$routes['modifierClient'] = 'modifClient/client';
+$routes['updateClient'] = 'enregistrementModificationClient/client';
+$routes['enregistrerAjax'] = 'enregistrer/jquery';
+$routes['facturation'] = 'displayAccueilFacturation/facturation';
+$routes['accueilClient'] = 'displayAccueilClient/facturation/Client';
+$routes['accueilFournisseur'] = 'displayAccueilFournisseur/facturation/Fournisseur';

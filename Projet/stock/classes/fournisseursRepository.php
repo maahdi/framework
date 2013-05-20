@@ -1,9 +1,8 @@
 <?php
 include_once _DIR_.'structure/repository.php';
-include_once _DIR_.'structure/repositoryInterface.php';
 include_once _DIR_.'Projet/stock/classes/fournisseurs.php';
 
-class FournisseursRepository extends Repository implements RepositoryInterface{
+class FournisseursRepository extends Repository {
     
     public function getAll(){
         $resultat = $this->findAll('fournisseurs','idFournisseur');
