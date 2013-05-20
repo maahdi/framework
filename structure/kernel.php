@@ -21,9 +21,15 @@ class Kernel{
             $action = $_GET['action'];  
             //Test la session en cours
             //Si pas bon renvoie à login
-            //if (!SessionPerso::testSession() && $action != 'login' && $action != 'connex'){
-            //  $action ='deconnex';
-            //}
+            if (!SessionPerso::testSession() && $action != 'login' && $action != 'connex'){
+              $action ='deconnex';
+            }
+            //Cas de visite sur un autre site et revenir par un raccourci 
+            //le menu de connexion apparaissait alors que la session est toujours valide
+            //Retour direct a l'accueil dans ce cas
+            if (SessionPerso::testSession() && $action == 'login'){
+                $action = 'accueil';
+            }
             $this->dispatch($action);
         }else{
             $this->dispatch('deconnex');
@@ -35,9 +41,11 @@ class Kernel{
         include _DIR_.'structure/routes.php';
         // Récupere le nom de la fonction demandé et le nom du bundle
         $exp = explode("/", $routes[$action]);
-        // '_DIR_/Projet/bundle/controller/bundleController.php'
-        // 'new BundleController()'
+        //$exp[2] correspond a un sous-controller du dossier facturation
+        //FacturationController, FacturationClientController, FacturationFournisseurController
         if (!isset($exp[2])){        
+            // '_DIR_/Projet/bundle/controller/bundleController.php'
+            // 'new BundleController()'
             include _DIR_."Projet/".$exp[1]."/controller/".$exp[1]."Controller.php";
             $controller = new $this->bundles[$exp[1]]();
         }else{
