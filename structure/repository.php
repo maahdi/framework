@@ -3,7 +3,7 @@ include_once _DIR_.'ORM/requete/requete.php';
 
 class Repository{
     
-    //$orderBy = 'DESC' ou 'ASC' directement
+    //$orderBy = nomDuChamp
     public function findAll($table, $orderBy){
         $requete = new Requete('select');
         $requete->setListePart(array('*'));
@@ -20,6 +20,11 @@ class Repository{
         $requete->setFromPart(array($table));
         $requete->addWherePart($where,$whereSearch);
         //echo $requete->toString();
-        return $requete->query();
+        $rslt = $requete->query();
+        if (!$rslt){
+            return false;
+        }else{
+            return $rslt;
+        }
     }
 }

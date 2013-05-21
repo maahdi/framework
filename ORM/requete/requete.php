@@ -1,10 +1,10 @@
 <?php
-include _DIR_."ORM/pdo/pdo.php";
+include _DIR_.'ORM/pdo/pdo.php';
 
 class Requete{
     private $mysql;
-    private $wherePart = "where ";
-    private $requete="";
+    private $wherePart = 'where ';
+    private $requete='';
     private $pdostatement=true;
     
     //On peut appeler Requete en spécifiant une commande SQL ou non
@@ -18,7 +18,8 @@ class Requete{
     
     public function resetRequete(){
         $this->requete = "";
-        $this->pdostatement = true;
+        $this->pdostatement->closeCursor();
+        $this->wherePart = 'where ';
     }
     
     public function setfromPart(array $liste){
@@ -37,13 +38,21 @@ class Requete{
             $i++;
         }
         $this->pdostatement->execute($valeur);
-        $this->setFetchModObj();
-        return $this->pdostatement;
+        if ($this->pdostatement == null){
+            return false;
+        }else{
+            $this->setFetchModObj();
+            return $this->pdostatement;
+        }
     }
     public function query(){
         $this->pdostatement = $this->mysql->query($this->requete);
-        $this->setFetchModObj();
-        return $this->pdostatement;
+        if ($this->pdostatement == null){
+            return false;
+        }else{
+            $this->setFetchModObj();
+            return $this->pdostatement;
+        }
     }
     
     public function setAscOrder(){
@@ -77,7 +86,7 @@ class Requete{
    //$choix : null pour le premier après on choisi and ou or 
     public function addWherePart($champ,$valeur,$choix = null){
         if (!($valeur == '?')){
-            $valeur = '\''.$valeur.'\'';
+           // $valeur = '\''.$valeur.'\'';
         }
         if ($choix == null){
             $choix ='and';

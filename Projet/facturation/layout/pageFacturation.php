@@ -13,8 +13,11 @@ if ($this->getData('accueil')){
 </table>
 <?php
 }
-if ($this->getData('accueilClient')){
-    $this->generateFichier('accueilClient', 'facturation');
+if ($this->getData('liste')){
+    $this->generateFichier('listeCommande','facturation');
+}
+if ($this->getData('afficherCommande')){
+    $this->generateFichier('afficheCommande', 'facturation');
 }
 ?>
 

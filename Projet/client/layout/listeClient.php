@@ -2,17 +2,29 @@
 <table class="tableau">
 <?php 
 if ($this->getData('listeClient') != false){
-    echo '<thead class="enteteListe">
+    $action = 'afficheListeClient&tri=';
+    $image = '../images/boutonTri.png';
+?>
+    <thead class="enteteListe">
         <th class="enteteListe"></th>
-        <th class="enteteListe">CodeClient<a href="'._LIENDIR_.'afficheListeClient&tri=idClient" ><img src="../images/boutonTri.png" border="0"></a></th>';
-    echo '<th class="enteteListe">Nom <a href="'._LIENDIR_.'afficheListeClient&tri=nomClient" ><img src="../images/boutonTri.png" border="0"></a></th>
-        <th class="enteteListe" >Prenom <a href="'._LIENDIR_.'afficheListeClient&tri=prenomClient" ><img src="../images/boutonTri.png" border="0"></a></th>
-        <th class="enteteListe">Adresse <a href="'._LIENDIR_.'afficheListeClient&tri=adresseClient" ><img src="../images/boutonTri.png" border="0"></a></th>
-        <th class="enteteListe">Code Postal <a href="'._LIENDIR_.'afficheListeClient&tri=cpClient" ><img src="../images/boutonTri.png" border="0"></a></th>
-        <th class="enteteListe">Pays <a href="'._LIENDIR_.'afficheListeClient&tri=idPays" ><img src="../images/boutonTri.png" border="0"></a></th>
+<?php
+    echo '<th class="enteteListe">CodeClient<a href="'._LIENDIR_.$action.'idClient" >';
+        echo '<img src="'.$image.'" border="0"></a></th>';
+    echo '<th class="enteteListe">Nom <a href="'._LIENDIR_.$action.'nomClient" >';
+        echo '<img src="'.$image.'" border="0"></a></th>';
+    echo '<th class="enteteListe" >Prenom <a href="'._LIENDIR_.$action.'prenomClient" >';
+        echo '<img src="'.$image.'" border="0"></a></th>';
+    echo '<th class="enteteListe">Adresse <a href="'._LIENDIR_.$action.'adresseClient" >';
+        echo '<img src="'.$image.'" border="0"></a></th>';
+    echo '<th class="enteteListe">Code Postal <a href="'._LIENDIR_.$action.'cpClient" >';
+        echo '<img src="'.$image.'" border="0"></a></th>';
+    echo '<th class="enteteListe">Pays <a href="'._LIENDIR_.$action.'idPays" ><img src="'.$image.'" border="0"></a></th>';
+?>
         <th class="enteteListefin"></th>
-        <th class="enteteListefin"></th></thead>';
-    echo '<tbody>';
+        <th class="enteteListefin"></th>
+    </thead>
+<tbody>
+<?php
     $i = 1;
     foreach ($this->getData('listeClient') as $key => $valeur){
         $id = $valeur->getIdClient();

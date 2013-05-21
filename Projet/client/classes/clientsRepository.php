@@ -49,15 +49,23 @@ class ClientsRepository extends Repository{
 
     public function getOne($whereSearch, $pays){
         $resultat = $this->findBy('clients','idClient',$whereSearch);
-        foreach ($resultat as $valeur){
-            $client = new Clients($valeur->idClient, 
-                $valeur->nomClient,
-                $valeur->prenomClient, 
-                $valeur->adresseClient, 
-                $valeur->cpClient, 
-                $pays[$valeur->idPays]);
+        if ($resultat != false){
+            //$client mis a false automatiquement
+            //Dans le controller le resultat de cette fonction
+            //renvoyait bien false pourtant
+            $client = false;
+            foreach ($resultat as $valeur){
+                $client = new Clients($valeur->idClient, 
+                    $valeur->nomClient,
+                    $valeur->prenomClient, 
+                    $valeur->adresseClient, 
+                    $valeur->cpClient, 
+                    $pays[$valeur->idPays]);
+            }
+            return $client;
+        }else{
+            return false;
         }
-        return $client;
     }
 
     public function insertOne(array $values){

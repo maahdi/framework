@@ -23,7 +23,8 @@ class ClientController extends Controller{
         $data = array();
         $data['listeClient'] = $this->getRepository('clients')->getByNomOrPrenom(strtoupper($_POST['search']), $this->pays);
         $this->view->turnSearchBarOff();
-        $this->view->setData(array('liste' => true));
+        $this->view->setData(array('liste'     => true,
+                                   'listePays' => $this->pays));
         $this->view->render($this->url, $data);
     }
 
@@ -53,7 +54,9 @@ class ClientController extends Controller{
         }
         $data['listeClient'] = $this->getRepository('clients')->getBy($champ, $search, $this->pays);
         $this->view->turnSearchBarOff();
-        $this->view->setData(array('liste' => true,'newSearch' => true));
+        $this->view->setData(array('liste'     => true,
+                                   'newSearch' => true,
+                                   'listePays' => $this->pays));
         $this->view->render($this->url, $data);
     }
 
@@ -95,7 +98,6 @@ class ClientController extends Controller{
                                       'adresseClient' => 'texte', 
                                       'nomPays'       => 'texte'), $_POST, $this);
         if ($this->getFormValid()){
-            unset($this->pays);
             $pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays');
             if ($pays == false){
                 // insertion du nouveau pays
@@ -110,8 +112,9 @@ class ClientController extends Controller{
                 }
             }
             $data['listeClient'] = array($this->getRepository('clients')->getOne($_POST['idClient'],$pays));
-            unset($pays);
-            $this->view->setData(array('liste' => true));
+            $this->view->setData(array('liste'     => true,
+                                       'listePays' => $this->pays));
+            $this->view->turnOffAjax();
             $this->view->render($this->url, $data);
         }else{
             $this->view->setData($_POST);
@@ -141,7 +144,9 @@ class ClientController extends Controller{
             $this->modifierClient($valeur, $client);
             $this->modele->updateOneClient($client);
             $this->view->setData(array('listeClient' => array($client->getIdClient() => $client),
-                                       'liste'       => true));
+                                       'liste'       => true,
+                                       'listePays'   => $this->pays));
+            $this->view->turnOffAjax();
             $this->view->render($this->url);
         }else{
             $this->view->setData($_POST);
@@ -155,10 +160,16 @@ class ClientController extends Controller{
 
     public function deleteClient(){
         $client = $this->getRepository('clients')->getOne($_GET['idClient'], $this->pays);
-        $this->modele->deleteOneClient($client);
-        $this->view->setData(array('listeClient' => array($client->getIdClient() => $client),
-                                   'liste' => true));
-        $this->view->render($this->url);
+        if ($client != false){
+            $this->modele->deleteOneClient($client);
+            $this->view->setData(array('listeClient' => array($client->getIdClient() => $client),
+                                       'liste'       => true,
+                                       'listePays'   => $this->pays));
+            $this->view->turnOffAjax();
+            $this->view->render($this->url);
+        }else{
+            $this->renderListeClient();
+        }
     }
 
     public function modifClient(){

@@ -16,7 +16,16 @@ class ArticlesRepository extends Repository{
         }
     }
     
-    public function getOne($id){
-        
+    public function getOne($id, $fournisseur){
+        $resultat = $this->findBy('articles', $id, 'idArticle');
+        foreach($resultat as $valeur){
+            $article = new Article($valeur->idArticle, $valeur->refArticle, $valeur->designation,
+                                    round($valeur->prixHT,3), $valeur->txTVA, $valeur->stock,
+                                    $fournisseur[$valeur->idFournisseur]);
+        }
+        return $article;
+    }
+
+    public function updateOne($listeValeur){
     }
 }

@@ -1,6 +1,6 @@
 <?php
-include _DIR_.'structure/repository.php';
-include _DIR_.'Projet/client/classes/pays.php';
+include_once _DIR_.'structure/repository.php';
+include_once _DIR_.'Projet/client/classes/pays.php';
 
 class PaysRepository extends Repository{
 

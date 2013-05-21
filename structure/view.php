@@ -7,6 +7,7 @@ class View{
     private $data = array();
     private $action;
     private $menuGauche = false;
+    private $ajax = true;
 
     //inclue l'url fournie et si nécessaire enregistre les données fournies 
     //dans $data[]
@@ -37,6 +38,14 @@ class View{
     //Pour afficher le menu en fonction du module dans lequel on est
     public function setSubmenu($action){
         $this->menuGauche = $action;
+    }
+
+    public function turnOffAjax(){
+        $this->ajax = false;
+    }
+
+    public function getAjax(){
+        return $this->ajax;
     }
 
     //Sert à choisir le sous-menu à afficher

@@ -83,6 +83,7 @@ class Controller{
     }
 
     public function unserializedObjet($fichier){
+    //    ini_set('unserialize_callback_func','callback');
         $fh = fopen($fichier,'r');
         $data = fread($fh, filesize($fichier));
         $objet = unserialize($data);

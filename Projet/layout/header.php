@@ -4,7 +4,7 @@
         <title>Logiciel de gestion</title>
         <meta charset="utf-8">
         <link rel="stylesheet" href="/framework/Projet/layout/style.css" type="text/css" media="screen">
-         <script type="text/javascript" src="../utils/inlineMod.js"></script>
+        <?php echo ($this->getAjax()) ? '<script type="text/javascript" src="../utils/inlineMod.js"></script>' : '';?>
          <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>-->
          <script type="text/javascript" src="/framework/utils/jquery-1.9.1.js"></script>
          <script type="text/javascript">
