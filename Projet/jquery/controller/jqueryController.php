@@ -9,11 +9,18 @@ class JqueryController extends Controller{
 	
     public function __construct(){
         parent::__construct();
+        //
+        // Tableau pour faciliter l'enregistrement
+        // A remplir si on veut affecter d'autres tables
+        //
         $this->primaryKey = array('articles' => 'idArticle',
         						  'clients'  => 'idClient');
         $this->modele = new JqueryModele();
     }
 
+    //
+    // Selon le type des donnée on les protège avant enregistrement
+    //
     public function enregistrer(){
 		$type = $_POST['type'];
 		$valeur = $_POST['valeur'];
@@ -41,6 +48,10 @@ class JqueryController extends Controller{
         }
     }
 
+    //
+    // XmlResponse prépare du xml : <item>              </item>
+    //                                  <$champ></$champ>
+    //
     public function sendReponse($champ, $table, $whereSearch, $where){
         $rslt = $this->modele->findOne($champ, $table, $whereSearch, $where);
         $xml = new XmlResponse(array($champ => round($rslt, 3)));

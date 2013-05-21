@@ -10,9 +10,11 @@ class ClientController extends Controller{
         include _DIR_.'Projet/client/modele/clientModele.php';
         include _DIR_.'structure/formValidation.php';
         $this->modele = new ClientModele();
+        //
         //Initialise les element du tableau servant a afficher
         //Pour les activer ensuites à la demande
-        //Si '$data['element'] = true' dans la page d'affichage principal
+        //Si '$View->data['element'] = true' dans la page d'affichage principal
+        //
         $this->view->setData(array('nouveau' => false, 'liste' => false, 'advancedSearch' => false, 'newSearch' => false));
         $this->view->setSubmenu('menuClient');
         $this->url = _DIR_.'Projet/client/layout/pageClient.php';
@@ -28,6 +30,10 @@ class ClientController extends Controller{
         $this->view->render($this->url, $data);
     }
 
+    //
+    // Recherche pas sensible a la casse
+    // Mise en majuscule de tout pour comparer
+    //
     public function advancedSearch(){
         $data = array();
         $champ = $_POST['champ'];
@@ -79,8 +85,10 @@ class ClientController extends Controller{
 
     public function renderNouveauClientForm(){
         $data = $this->getLastId();
+        //
         //On supprimer le fichier de donnée lorsque l'on clique sur le bouton
         //du sous-menu 'Nouveau client'
+        //
         if (is_file(_DIR_.'Projet/serialized/dataErreur.txt')){
             $this->deleteFichier(_DIR_.'Projet/serialized/dataErreur.txt');
         }
@@ -89,8 +97,15 @@ class ClientController extends Controller{
         $this->view->render($this->url);
     }
 
+    //
     //Enregistre le client et affiche un tableau contenant le client nouvellement enregistré
+    //
     public function enregistrerClient(){
+        //
+        // FormValidation à inclure et instancier avec paramètres
+        // Modifie seul controller::formValid à true ou false
+        // Rempli aussi View::data[indice] = value
+        //
         $c = new FormValidation(array('idClient'      => 'numeric', 
                                       'nomClient'     => 'texte',
                                       'cpClient'      => 'numeric', 
@@ -100,7 +115,9 @@ class ClientController extends Controller{
         if ($this->getFormValid()){
             $pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays');
             if ($pays == false){
-                // insertion du nouveau pays
+                //
+                // insertion du nouveau pays possible
+                //
             }else{
                 foreach($pays as $valeur){
                    $this->getRepository('clients')->insertOne(array($_POST['idClient'],
@@ -124,8 +141,10 @@ class ClientController extends Controller{
     }
 
     public function enregistrementModificationClient(){
+        //
         //Le pays rentré est chargé et envoyé à l'objet Client
         //Il n'y as plus qu'a modifier les autres attributs
+        //
         $pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays');
         $client = $this->getRepository('clients')->getOne($_POST['idClient'], $pays);
         $c = new FormValidation(array('idClient'      => 'numeric', 
@@ -140,12 +159,14 @@ class ClientController extends Controller{
                             'prenomClient'   => $_POST['prenomClient'],
                             'adresseClient'  => $_POST['adresseClient'],
                             'cpClient'       => $_POST['cpClient']);
-            //Modification de l'objet en passant une référence de l'objet
             $this->modifierClient($valeur, $client);
             $this->modele->updateOneClient($client);
             $this->view->setData(array('listeClient' => array($client->getIdClient() => $client),
                                        'liste'       => true,
                                        'listePays'   => $this->pays));
+            //
+            //Désactivation du script ajax
+            //
             $this->view->turnOffAjax();
             $this->view->render($this->url);
         }else{
@@ -185,17 +206,27 @@ class ClientController extends Controller{
         if (($nb = count($id)) == 0){
             $data['lastId'] = 2000;
         }
-        if ($id[0] > 2000){ //Gère le cas ou le premier num est 2001 par ex.
+        //
+        //Gère le cas ou le premier num est 2001 par ex.
+        //
+        if ($id[0] > 2000){ 
             $data['lastId'] = 2000;
         }else{
             for ($i = 0 ; $i < $nb-1 ; $i++){
-                if ($id[$i+1] != $id[$i]+1 ){ //si le numéro suivant n'est pas logiquement le précédent +1 c'est un numéro libre
+                //
+                //si le numéro suivant n'est pas logiquement le précédent +1 c'est un numéro libre
+                //dans ce cas on sort de la boucle
+                //
+                if ($id[$i+1] != $id[$i]+1 ){ 
                     $data['lastId'] = $id[$i]+1;
-                    $i = $nb-2; //dans ce cas on sort de la boucle
+                    $i = $nb-2; 
                 }
             }
+            //
+            // s'il n'y a pas de num libre on continue en suivant du dernier
+            //
             if (!isset($data['lastId'])){
-                $data['lastId'] = $id[$nb-1]+1;// s'il n'y a pas de num libre on continue en suivant du dernier
+                $data['lastId'] = $id[$nb-1]+1;
             }
         }
         return $data;
@@ -205,12 +236,13 @@ class ClientController extends Controller{
         $key = array_keys($valeur);
         $i = 0;
         foreach ($valeur as $v){
+            //
             //ex : '$client->setIdClient()'
+            //
             $fonction = 'set'.ucfirst($key[$i]);
             $client->$fonction($v);
             $i++;
         }
-        //return $client;
     }
 
 }

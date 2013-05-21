@@ -7,5 +7,16 @@ class FacturationClientModele extends Modele{
         parent::__construct();
     }
 
+    //
+    //Retourne array( valeur )
+    //
+    public function getAllId($champ, $table){
+        $rslt = $this->getTable(array($champ),array($table));
+        $id = array();
+        foreach($rslt as $valeur){
+            $id[] = $valeur->$champ;
+        }
+        return $id;
+    }
 
 }

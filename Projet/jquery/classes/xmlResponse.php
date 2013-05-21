@@ -3,7 +3,9 @@
 class XmlResponse{
     private $response;
     
+    //
     // listeChamp = title => valeur
+    //
     public function __construct(array $listeChamp){
         $key = array_keys($listeChamp);
         $i = 0;

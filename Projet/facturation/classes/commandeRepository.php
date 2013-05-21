@@ -3,10 +3,12 @@ include_once _DIR_.'structure/repository.php';
 include_once _DIR_.'Projet/facturation/classes/commande.php';
 
 class CommandeRepository extends Repository{
+    //
     //$articles = array('idArticle'=> Article) 
     //$client = array('idClient' => Client)
     //$factOrCom = 'fact' ou 'com'
     //pour facture ou commande
+    //
     public function getNewCommande(){
         return new Commande('1');
     }
@@ -16,16 +18,24 @@ class CommandeRepository extends Repository{
         $produitCmd = $this->findAll('produitcmd', 'idCmd');
         $lastValue = '';
         $index = array();
+        //
         //On récupère les numéro de commandes uniques
+        //
         foreach ($produitCmd as $valeur){
+            //
+            // 1. '' != '4000' -->les numero sont dans l'ordre normalement asc
+            // Ensuite dès que un change on met dans $index
+            // 
             if ($lastValue != $valeur->idCmd){
                 $index[] = $valeur->idCmd;
                 $lastValue = $valeur->idCmd;
             }
             $listeProduit[] = $valeur;
         }
+        //
         //Pour chaque commande on instancie une nouvelle commande
         //et on lui associe les articles correspondants
+        //
         foreach ($index as $valeur){
             $liste[$valeur] = new Commande($valeur);
         }
@@ -42,13 +52,14 @@ class CommandeRepository extends Repository{
             }else{
                 $unValid [$valeur->idCmd] = $valeur->idCmd;
             }
-            //Remise dans la base mais pas utiliser
         }
         return $this->checkValid($liste, $unValid, $factOrCom);
     }
 
+    //
     //$factOrCom = 'fact' ou 'com'
     //pour facture ou commande
+    //
     public function getOne($idCmd, array $articles, array $client, $factOrCom){
         $requete = new Requete('select');
         $listeChamp = array ('idCmd',
@@ -59,6 +70,11 @@ class CommandeRepository extends Repository{
         $requete->setListePart(array('commandes'), 'from');
         $requete->addWherePart('idCmd','?');
         $rslt = $requete->queryPrepare(array($idCmd));
+        //
+        // $unValid est rempli par les commandes qui ont valid = false
+        // Servira a faire le partage de quel parti de la liste ont garde
+        // entre les commande et les commandes validées (factures)
+        //
         $unValid = array();
         foreach ($rslt as $valeur){
             $commande = new Commande($valeur->idCmd);
@@ -80,10 +96,15 @@ class CommandeRepository extends Repository{
             $commande->setQteCmd($valeur->idArticle, $valeur->qteCmd);
         }
         $commande->setTotaux();
+        //
         //Retour comme sa car checkValid renvoi un tableau associatif
+        //
         return $this->checkValid(array($commande), $unValid, $factOrCom); 
     }
 
+    //
+    // Enregistre une commande deja créer
+    //
     public function updateOne(Commande $commande, $lastId){
         $requete = new Requete('update commandes');
         $requete->setListePart(array('set idClient = ?',
@@ -137,13 +158,20 @@ class CommandeRepository extends Repository{
 
     }
 
+    //
     //Vérifie que la liste retourne soit les factures $commande::valid = 1
     //soit les commandes $commande::valid = 0
+    //
     private function checkValid($liste, $unValid, $factOrCom){
         $rslt = array();
         switch ($factOrCom){
         case 'fact':
             foreach ($liste as $valeur){
+                //
+                // On parcourt la liste des commandes
+                // Pour chaque on compare s'ils faisait partis des commandes::valid était = false
+                // Si c'est pas le cas on met la commande dans le retourne
+                //
                 if (isset($unValid[$valeur->getIdCmd()]) && $valeur->getIdCmd() != $unValid[$valeur->getIdCmd()]){
                     $rslt[$valeur->getIdCmd()] = $valeur;
                 }
@@ -151,6 +179,10 @@ class CommandeRepository extends Repository{
             break;
         case 'com':
             foreach ($liste as $valeur){
+                //
+                //Meme cas sauf que si commande::valid était = false
+                //On met les commandes dans le retourne
+                //
                 if (isset($unValid[$valeur->getIdCmd()]) && $valeur->getIdCmd() == $unValid[$valeur->getIdCmd()]){
                     $rslt[$valeur->getIdCmd()] = $valeur;
                 }

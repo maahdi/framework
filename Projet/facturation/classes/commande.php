@@ -14,6 +14,9 @@ class Commande{
         $this->idCmd = $idCmd;
     }
 
+    //
+    // Retourne String Pour Affichage aperçu liste d'articles
+    //
     public function toStringArticles($nb){
         $i =0;
         $rslt ='';
@@ -95,6 +98,9 @@ class Commande{
         return $this->totalTTC;
     }
     
+    // 
+    // Retourne array ( id => Objet )
+    //
     public function getListeArticle(){
         return $this->listeArticle;
     }
@@ -107,8 +113,10 @@ class Commande{
         if (!$this->valid){
             $this->valid = true;
         }else{
-            //Si la commande est deja valid lever une exception
-            //A faire
+            //
+            // Si la commande est deja valid lever une exception
+            // A faire
+            //
         }
     }
 
@@ -116,6 +124,12 @@ class Commande{
     	return $this->valid;
     }
     
+    //
+    // A lancer pour remplir
+    //   totalHT
+    //   tva
+    //   totalTTC
+    //
     public function setTotaux($idArticle = null){
         if ($idArticle != null){
             $this->totalHT  += $this->listeArticle[$idArticle]->getPrixHT()*$this->listeArticle[$idArticle]->getQteCmd();
