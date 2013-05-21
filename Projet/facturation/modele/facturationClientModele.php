@@ -19,4 +19,12 @@ class FacturationClientModele extends Modele{
         return $id;
     }
 
+    public function supprimerOneArticleCommande(array $champ, array $value, $table){
+        $requete = new Requete('delete from '.$table);
+        foreach($champ as $valeur){
+            $requete->addWherePart($valeur, '?');
+        }
+        $requete->queryPrepare($value);
+    }
+
 }

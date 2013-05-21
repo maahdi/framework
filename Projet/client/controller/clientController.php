@@ -48,6 +48,9 @@ class ClientController extends Controller{
             $search = (int) $indicePays;
             $champ = 'idPays';
             break;
+        case 'emailClient':
+            $search = strtoupper($_POST['search']);
+            break;
         case 'cpClient':
             $search =(int) $_POST['search'];
             break;
@@ -109,20 +112,25 @@ class ClientController extends Controller{
         $c = new FormValidation(array('idClient'      => 'numeric', 
                                       'nomClient'     => 'texte',
                                       'cpClient'      => 'numeric', 
+                                      'emailClient'   => 'texte',
                                       'prenomClient'  => 'texte', 
                                       'adresseClient' => 'texte', 
                                       'nomPays'       => 'texte'), $_POST, $this);
         if ($this->getFormValid()){
             $pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays');
             if ($pays == false){
+
+            echo 'lol';
                 //
                 // insertion du nouveau pays possible
                 //
             }else{
+
                 foreach($pays as $valeur){
                    $this->getRepository('clients')->insertOne(array($_POST['idClient'],
                                                                     $_POST['nomClient'],
                                                                     $_POST['prenomClient'], 
+                                                                    $_POST['emailClient'],
                                                                     $_POST['adresseClient'],
                                                                     $_POST['cpClient'], 
                                                                     $valeur->getIdPays()));

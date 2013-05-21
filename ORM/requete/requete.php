@@ -63,7 +63,6 @@ class Requete{
         $this->requete .= "DESC";
     }
     
-    //$liste =array()
     public function setListePart(array $liste, $entete = null, $pied = null){
         if (isset($entete)){
             $this->requete .= $entete." ".$this->addVirgule($liste);
@@ -75,7 +74,6 @@ class Requete{
         }
     }
 
-    //$liste =array()
     public function setListeTable(array $liste, $entete = null){
         $this->setListePart($liste, $entete);
     }
@@ -83,10 +81,13 @@ class Requete{
     public function toString(){
             return $this->requete;
     }
-   //$choix : null pour le premier après on choisi and ou or 
-    public function addWherePart($champ,$valeur,$choix = null){
-        if (!($valeur == '?')){
-           // $valeur = '\''.$valeur.'\'';
+    //
+    // $choix : null pour le premier après on choisi AND ou OR 
+    // Par default AND
+    //
+    public function addWherePart($champ,$valeur, $escape = null, $choix = null){
+        if ((!($valeur == '?')) && $choix == true){
+            $valeur = '\''.$valeur.'\'';
         }
         if ($choix == null){
             $choix ='and';

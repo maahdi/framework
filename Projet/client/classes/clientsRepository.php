@@ -18,6 +18,7 @@ class ClientsRepository extends Repository{
             $client = new Clients($resultat['idClient'],
                                   $resultat['nomClient'],
                                   $resultat['prenomClient'],
+                                  $resultat['emailClient'],
                                   $resultat['adresseClient'],
                                   $resultat['cpClient'],
                                   $valeur);
@@ -37,6 +38,7 @@ class ClientsRepository extends Repository{
                 $liste[$valeur->idClient] = new Clients($valeur->idClient, 
                     $valeur->nomClient,
                     $valeur->prenomClient, 
+                    $valeur->emailClient,
                     $valeur->adresseClient, 
                     $valeur->cpClient, 
                     $pays[$valeur->idPays]);
@@ -58,6 +60,7 @@ class ClientsRepository extends Repository{
                 $client = new Clients($valeur->idClient, 
                     $valeur->nomClient,
                     $valeur->prenomClient, 
+                    $valeur->emailClient,
                     $valeur->adresseClient, 
                     $valeur->cpClient, 
                     $pays[$valeur->idPays]);
@@ -71,7 +74,7 @@ class ClientsRepository extends Repository{
     public function insertOne(array $values){
         $requete = new Requete('insert into');
         $requete->setListePart(array('clients'));
-        $requete->setListePart(array('?,?,?,?,?,?'), 'values(',')');
+        $requete->setListePart(array('?,?,?,?,?,?,?'), 'values(',')');
         $requete->queryPrepare($values);
     }
 

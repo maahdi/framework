@@ -9,8 +9,8 @@ class CommandeRepository extends Repository{
     //$factOrCom = 'fact' ou 'com'
     //pour facture ou commande
     //
-    public function getNewCommande(){
-        return new Commande('1');
+    public function getNewCommande($id){
+        return new Commande($id);
     }
 
     public function getAll($articles, $client, $factOrCom){
@@ -131,23 +131,14 @@ class CommandeRepository extends Repository{
                                      $commande->getTotalHTArticle($lastId)));
     }
 
-    public function insertOne($idCmd, $client, $date, $qte, $idArticle, $factOrCom){
+    public function insertOne($idCmd, $idClient, $date, $qte, $idArticle){
         $requete = new Requete('insert into');
         $requete->setListePart(array('commandes'));
-        switch ($factOrCom){
-        case 'com':
-            $valid = 0;
-            break;
-        case 'fact':
-            $valid = 1;
-            break;
-        }
-        $requete->setListePart(array('idCmd','idClient', 'dateCmd', 'valid'),'(',')');
-        $requete->setListePart(array('?,?,?,?'),'values(',')');
+        $requete->setListePart(array('idCmd','idClient', 'dateCmd'),'(',')');
+        $requete->setListePart(array('?,?,?'),'values(',')');
         $requete->queryPrepare(array($idCmd, 
-                                     $client->getIdClient(),
-                                     $date, 
-                                     $valid));
+                                     $idClient,
+                                     $date));
         $requete->resetRequete();
         $requete->setListePart(array('produitcmd'),'insert into');
         $requete->setListePart(array('idCmd','idArticle', 'qteCmd'),'(',')');

@@ -18,6 +18,10 @@
             <input type="radio" name="champ" value="prenomClient">
         </ul>
         <ul>
+            <label for="champ">Courriel</label>
+            <input type="radio" name="champ" value="emailClient">
+        </ul>
+        <ul>
             <label for="champ">Adresse</label>
             <input type="radio" name="champ" value="adresseClient">
         </ul>

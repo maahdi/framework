@@ -85,6 +85,10 @@ class Commande{
     public function getNomClient(){
         return $this->client->getNomClient();
     }
+
+    public function getPrenomClient(){
+        return $this->client->getPrenomClient();
+    }
   
     public function getDateCmd(){
         return $this->dateCmd;

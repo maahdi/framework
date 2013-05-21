@@ -15,6 +15,10 @@
                     <label for='prenomClient'>Prenom</label>
                     <input type='text' name='prenomClient' value='<?php echo ($this->getData('prenomClient') != false)?  $this->getData('prenomClient'):'';?>'>
                 </ul>
+                <ul> 
+                    <label for='emailClient'>Courriel</label>
+                    <input type='text' name='emailClient' value='<?php echo ($this->getData('emailClient') != false)?  $this->getData('emailClient'):'';?>'>
+                </ul>
                 <ul>  
                     <label for='adresseClient'>Adresse</label>
                     <input type='text' name='adresseClient' value='<?php echo ($this->getData('adresseClient') != false)?  $this->getData('adresseClient'):'';?>'>

@@ -27,13 +27,13 @@ if ($this->getData('commandeModif')){
     // Dans le cas d'un nouveau client on importe la liste des clients
     //  pour alimenter le select
     //
-    if (isset($this->getData('clients'))){
+    if ($this->getData('clients') != false){
         $clients = $this->getData('clients');
     }
     //
     // Dans le cas d'une modification on récupère juste l'idClient
     //
-    if (isset($this->getData('idClient'))){
+    if ($this->getData('idClient') != false){
         $idClient = $this->getData('idClient');
     }
 }
@@ -73,11 +73,13 @@ if (isset($clients)){
 // L'idée était de mettre une restriction si la commande n'est pas valide
 // car devenu facture
 //
-if (isset($commande) && (!$commande->getValidationCommande())){?>
-    <td>Quantité : <input name="qte" type="text"></td>
-<?php }elseif (isset($idClient)){?>
-    <td>Quantité : <input name"qte" type="text"></td>
-<?php} ?>
+if (isset($commande) && (!$commande->getValidationCommande())){
+    echo '<td>Quantité : <input name="qte" type="text"></td>';
+}elseif (isset($idClient)){
+    echo '<td>Quantité : <input name"qte" type="text"></td>';
+}elseif (isset($clients)){
+    echo '<td>Quantité : <input name="qte" type="text"></td>';
+} ?>
 <td><input type="submit" value="Ajouter">
 <input type="hidden" value="<?php echo $idCmd; ?>" name="idCmd">
 <input type="hidden" value="<?php echo $date;?>" name="dateCmd">
@@ -85,6 +87,7 @@ if (isset($commande) && (!$commande->getValidationCommande())){?>
 </form>
 <table class="tableau">
     <thead>
+        <th class="enteteListe"></th>
         <th class="enteteListe">Code Produit</th>
         <th class="enteteListe">Designation</th>
         <th class="enteteListe">PrixHT</th>
@@ -101,7 +104,8 @@ if (isset($articles)){
         $sousTotal = $valeur->getPrixHT()*$valeur->getQteCmd();
         $sommeTotalHT += $sousTotal;
         $totalTVA += $valeur->getTauxTVA()*$sousTotal/100;
-        echo '<tr><td>'.$valeur->getIdArticle().'</td>';
+        echo '<tr><td><a href="'._LIENDIR_.'supprimerOneArticle&idArticle='.$valeur->getIdArticle().'&idCmd='.$commande->getIdCmd().'">Supprimer</a></td>';
+        echo '<td>'.$valeur->getIdArticle().'</td>';
         echo '<td>'.$valeur->getDesignation();
         echo '<td>'.$valeur->getPrixHT().'</td>';
         echo '<td>'.$valeur->getQteCmd().'</td>';

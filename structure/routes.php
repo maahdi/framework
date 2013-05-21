@@ -29,3 +29,4 @@ $routes['newFactureClient']             = 'newFacture/facturation/Client';//A fa
 $routes['factureClient']                = 'afficheFacture/facturation/Client';//Idem    
 $routes['suiviClient']                  = 'afficherSuivi/facturation/Client';//Idem
 $routes['ajouterArticleComClient']      = 'ajouterArticle/facturation/Client';
+$routes['supprimerOneArticle']          = 'supprimerOneArticle/facturation/Client';

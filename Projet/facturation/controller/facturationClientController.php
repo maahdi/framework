@@ -14,6 +14,7 @@ class FacturationClientController extends Controller{
         //
         $this->modele = new FacturationClientModele();
         $this->view->setSubMenu('menuFacturationClient');
+        $this->urlCommande = _DIR_.'Projet/serialized/commandeEnCours.txt';
     }
 
     public function displayAccueilClient(){
@@ -60,8 +61,8 @@ class FacturationClientController extends Controller{
     }
 
     public function modifierCommande(){
-        if (is_file(_DIR_.'Projet/serialized/commandeEnCours.txt')){
-            unlink(_DIR_.'Projet/serialized/commandeEnCours.txt');
+        if (is_file($this->urlCommande)){
+            unlink($this->urlCommande);
         }
         //
         // En modifiant on construit une Commande
@@ -73,12 +74,29 @@ class FacturationClientController extends Controller{
         $data['articles'] = $this->getRepository('articles')->getAll($fournisseur);
         $this->view->setData(array('afficherCommande' => true,
                                    'idClient'         => $_GET['idClient']));
-        $this->serializedObjet(_DIR_.'Projet/serialized/commandeEnCours.txt', $commandes[$_GET['idCmd']], 'w');
+        $this->serializedObjet($this->urlCommande, $commandes[$_GET['idCmd']], 'w');
         $this->view->render($this->url, $data);
     }
 
-    public function ajouterArticle(){
-        if (is_file(_DIR_.'Projet/serialized/commandeEnCours.txt')){
+    private function modificationOneCommande($commande){
+        //
+        //Récupération des repository pour enregistrer mon objet Commande
+        //
+        $fournisseur = $this->getRepository('fournisseurs')->getAll();
+        $article = $this->getRepository('articles')->getAll ($fournisseur);
+        unset($fournisseur);
+        $pays = $this->getRepository('pays')->getAll();
+        $client = $this->getRepository('clients')->getOne($_GET['idClient'], $pays);
+        unset($pays);
+        $commande->setDateCmd($_GET['dateCmd']);
+        $commande->setOneArticle($article[$_GET['idArticle']]);
+        $commande->setQteCmd($_GET['idArticle'],$_GET['qte']);
+        $commande->setClient($client);
+        $commande->setTotaux();
+    }
+
+    public function ajouterArticle($suppression = null){
+        if (is_file($this->urlCommande)){
             //
             // Inclusion des fichiers pour récupérer l'objet Commande entier
             //
@@ -91,36 +109,63 @@ class FacturationClientController extends Controller{
             // Récupération de l'objet Commande dans le .txt
             // Serialized choix modif ou nouvelle commande
             //
-            $commande = $this->unserializedObjet(_DIR_.'Projet/serialized/commandeEnCours.txt');
-            //
-            //Récupération des repository pour enregistrer mon objet Commande
-            //
-            $fournisseur = $this->getRepository('fournisseurs')->getAll();
-            $article = $this->getRepository('articles')->getAll ($fournisseur);
-            unset($fournisseur);
-            $pays = $this->getRepository('pays')->getAll();
-            $client = $this->getRepository('clients')->getOne($_GET['idClient'], $pays);
-            unset($pays);
-            $commande->setDateCmd($_GET['dateCmd']);
-            $commande->setOneArticle($article[$_GET['idArticle']]);
-            $commande->setQteCmd($_GET['idArticle'],$_GET['qte']);
-            $commande->setClient($client);
-            $commande->setTotaux();
+            $commande = $this->unserializedObjet($this->urlCommande);
+            $this->modificationOneCommande($commande);
             $this->getRepository('commande')->updateOne($commande, $_GET['idArticle']);
+        }else{
+            $commande = $this->getRepository('commande')->getNewCommande($_GET['idCmd']);
+            $this->modificationOneCommande($commande);
+            $this->getRepository('commande')->insertOne($_GET['idCmd'],$_GET['idClient'],
+                                                        $_GET['dateCmd'],$_GET['qte'], $_GET['idArticle']);
         }
         //
         //Enregistrement pour ajout d'article au prochain passage
         //
-        $this->serializedObjet(_DIR_.'Projet/serialized/commandeEnCours.txt', $commande, 'w');
+        $this->serializedObjet($this->urlCommande, $commande, 'w');
+        $articles = $this->getRepository('articles')->getAll($this->getRepository('fournisseurs')->getAll());
+        $this->view->setData(array('commandeModif' => $commande,
+                                   'articles'      => $articles,
+                                   'afficherCommande' => true));
+        $this->view->render($this->url);
+    }
+
+    public function supprimerOneArticle(){
+        $this->modele->supprimerOneArticleCommande(array ('idArticle','idCmd'),array($_GET['idArticle'],$_GET['idCmd']), 'produitcmd');
+        $commande = $this->getRepository('commande')->getNewCommande($_GET['idCmd']);
+        $this->setCommandeAfterArticleDelete($commande);
+        $this->serializedObjet($this->urlCommande, $commande, 'w');
+        $article = $this->getRepository('articles')->getAll($this->getRepository('fournisseurs')->getAll());
         $this->view->setData(array('commandeModif' => $commande,
                                    'articles'      => $article,
                                    'afficherCommande' => true));
         $this->view->render($this->url);
     }
 
+    public function setCommandeAfterArticleDelete($commande){
+        $rslt = $this->getRepository('commande')->findBy('commandes', 'idCmd',$commande->getIdCmd());
+        foreach ($rslt as $valeur){
+                $idClient = $valeur->idClient;
+                $commande->setDateCmd($valeur->dateCmd);
+        }
+        $fournisseur = $this->getRepository('fournisseurs')->getAll();
+        $article = $this->getRepository('articles')->getAll ($fournisseur);
+        unset($fournisseur);
+        $pays = $this->getRepository('pays')->getAll();
+        $client = $this->getRepository('clients')->getOne($idClient, $pays);
+        unset($pays);
+        $commande->setClient($client);
+        unset($client);
+        $rslt = $this->getRepository('commande')->findBy('produitcmd','idCmd',$commande->getIdCmd());
+        foreach($rslt as $valeur){
+            $commande->setOneArticle($article[$valeur->idArticle]);
+            $commande->setQteCmd($valeur->idArticle, $valeur->qteCmd);
+        }
+        $commande->setTotaux();
+    }
+
     public function newCommande(){
-        if (is_file(_DIR_.'Projet/serialized/commandeEnCours.txt')){
-            unlink(_DIR_.'Projet/serialized/commandeEnCours.txt');
+        if (is_file($this->urlCommande)){
+            unlink($this->urlCommande);
         }
         $pays             = $this->getRepository('pays')->getAll();
         $data['clients']  = $this->getRepository('clients')->getAll($pays);
@@ -130,7 +175,6 @@ class FacturationClientController extends Controller{
         unset($fournisseurs);
         $this->view->setData($this->getNewId());
         $this->view->setData(array('afficherCommande'   => true,
-                                   
                                    'dateCmd'            => time()));
         $this->view->render($this->url, $data); 
     }

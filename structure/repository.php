@@ -18,7 +18,10 @@ class Repository{
         $requete = new Requete('select');
         $requete->setListePart(array('*'));
         $requete->setFromPart(array($table));
-        $requete->addWherePart($where,$whereSearch);
+        //
+        // true pour utiliser $escape et lui mettre
+        //
+        $requete->addWherePart($where,$whereSearch, true);
         //echo $requete->toString();
         $rslt = $requete->query();
         if (!$rslt){

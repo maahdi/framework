@@ -14,6 +14,8 @@ if ($this->getData('listeClient') != false){
         echo '<img src="'.$image.'" border="0"></a></th>';
     echo '<th class="enteteListe" >Prenom <a href="'._LIENDIR_.$action.'prenomClient" >';
         echo '<img src="'.$image.'" border="0"></a></th>';
+    echo '<th class="enteteListe" >Courriel <a href="'._LIENDIR_.$action.'emailClient" >';
+        echo '<img src="'.$image.'" border="0"></a></th>';
     echo '<th class="enteteListe">Adresse <a href="'._LIENDIR_.$action.'adresseClient" >';
         echo '<img src="'.$image.'" border="0"></a></th>';
     echo '<th class="enteteListe">Code Postal <a href="'._LIENDIR_.$action.'cpClient" >';
@@ -32,6 +34,8 @@ if ($this->getData('listeClient') != false){
         echo '<td style="width:10%;">'.$valeur->getIdClient().'</td>';
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'nomClient', 'texte',".$i.",'clients')\">".$valeur->getNomClient()."</td>";
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'prenomClient', 'texte',".$i.",'clients')\">".$valeur->getprenomClient()."</td>";
+        echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'emailClient', 'texte',".$i.",'clients')\">".$valeur->getEmailClient()."</td>";
+
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'adresseClient', 'texte',".$i.",'clients')\">".$valeur->getAdresseClient()."</td>";
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'cpClient', 'texte',".$i.",'clients')\">".$valeur->getCpClient()."</td>";
         echo "<td class='texte'><select onchange=\"inlineModSelect(".$id.", this, 'idPays', 'entier',".$i.",'clients')\" name='idPays'>";
