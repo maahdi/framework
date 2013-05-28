@@ -23,11 +23,11 @@ class JqueryModele extends Modele{
                 if ($i == $nb -1){
                     $fin = '';
                 }
-                $requete->setListePart(array($valeur),'','= ?'.$fin);
+                $requete->liste(array($valeur),'','= ?'.$fin);
                 $i++;
             }
         }
-        $requete->addWherePart($primaryKey, $where);
+        $requete->where($primaryKey, $where);
         $requete->queryPrepare($listeValeur);
     }
 }

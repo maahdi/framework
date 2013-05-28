@@ -66,9 +66,9 @@ class CommandeRepository extends Repository{
                              'idClient',
                              'dateCmd',
                              'valid');
-        $requete->setListePart($listeChamp);
-        $requete->setListePart(array('commandes'), 'from');
-        $requete->addWherePart('idCmd','?');
+        $requete->liste($listeChamp);
+        $requete->liste(array('commandes'), 'from');
+        $requete->where('idCmd','?');
         $rslt = $requete->queryPrepare(array($idCmd));
         //
         // $unValid est rempli par les commandes qui ont valid = false
@@ -86,10 +86,9 @@ class CommandeRepository extends Repository{
                 $unValid[$commande->getIdCmd()] = $commande->getIdCmd();
             }
         }
-        $requete->resetRequete();
-        $requete->setListePart(array('idArticle', 'qteCmd'),'select');
-        $requete->setListePart(array('produitcmd'),'from');
-        $requete->addWherePart('idCmd','?');
+        $requete->liste(array('idArticle', 'qteCmd'),'select');
+        $requete->liste(array('produitcmd'),'from');
+        $requete->where('idCmd','?');
         $rslt = $requete->queryPrepare(array($idCmd));
         foreach($rslt as $valeur){
             $commande->setOneArticle($articles[$valeur->idArticle]);
@@ -107,11 +106,11 @@ class CommandeRepository extends Repository{
     //
     public function updateOne(Commande $commande, $lastId){
         $requete = new Requete('update commandes');
-        $requete->setListePart(array('set idClient = ?',
+        $requete->liste(array('set idClient = ?',
                                      'totalHT = ?',
                                      'totalTVA = ?',
                                      'valid = ?'));
-        $requete->addWherePart('idCmd','?');
+        $requete->where('idCmd','?');
         $requete->queryPrepare(array($commande->getIdClient(),
                                      $commande->getTotalHT(),
                                      $commande->getTva(),
@@ -119,12 +118,12 @@ class CommandeRepository extends Repository{
                                      $commande->getIdCmd()));
 
         $requete->resetRequete();
-        $requete->setListePart(array('insert into produitcmd'));
-        $requete->setListePart(array('idArticle',
+        $requete->liste(array('insert into produitcmd'));
+        $requete->liste(array('idArticle',
                                      'idCmd',
                                      'qteCmd',
                                      'totalHT'),'(',')');
-        $requete->setListePart(array('?,?,?,?'),'values(',')');
+        $requete->liste(array('?,?,?,?'),'values(',')');
         $requete->queryPrepare(array($lastId,
                                      $commande->getIdCmd(),
                                      $commande->getQteCmd($lastId),
@@ -133,20 +132,19 @@ class CommandeRepository extends Repository{
 
     public function insertOne($idCmd, $idClient, $date, $qte, $idArticle){
         $requete = new Requete('insert into');
-        $requete->setListePart(array('commandes'));
-        $requete->setListePart(array('idCmd','idClient', 'dateCmd'),'(',')');
-        $requete->setListePart(array('?,?,?'),'values(',')');
+        $requete->liste(array('commandes'));
+        $requete->liste(array('idCmd','idClient', 'dateCmd'),'(',')');
+        $requete->liste(array('?,?,?'),'values(',')');
         $requete->queryPrepare(array($idCmd, 
                                      $idClient,
                                      $date));
         $requete->resetRequete();
-        $requete->setListePart(array('produitcmd'),'insert into');
-        $requete->setListePart(array('idCmd','idArticle', 'qteCmd'),'(',')');
-        $requete->setListePart(array('?,?,?'), 'values(',')');
+        $requete->liste(array('produitcmd'),'insert into');
+        $requete->liste(array('idCmd','idArticle', 'qteCmd'),'(',')');
+        $requete->liste(array('?,?,?'), 'values(',')');
         $requete->queryPrepare(array($idCmd,
                                      $idArticle,
                                      $qte));
-
     }
 
     //

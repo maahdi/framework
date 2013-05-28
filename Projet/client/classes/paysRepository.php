@@ -10,12 +10,15 @@ class PaysRepository extends Repository{
     }
 
     public function getBy($search, $champ){
-        $resultat = $this->findBy('pays','upper('.$champ.')', $search);
+        $requete = new Requete('select *');
+        $requete->liste(array('pays'), 'from');
+        $requete->where($champ,'?');
+        $resultat = $requete->queryPrepare(array($search));
         return $this->constructPays($resultat);
     }
 
     public function constructPays($resultat){
-        if ($resultat->rowCount() > 0 ){
+        if ($resultat->rowCount() > 0){
             foreach ($resultat as $valeur){
                 $liste[$valeur->idPays] = new Pays($valeur->idPays, $valeur->nomPays);
             }

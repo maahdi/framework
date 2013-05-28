@@ -6,9 +6,9 @@ class Repository{
     //$orderBy = nomDuChamp
     public function findAll($table, $orderBy){
         $requete = new Requete('select');
-        $requete->setListePart(array('*'));
-        $requete->setfromPart(array($table));
-        $requete->setListePart(array($orderBy),'order by');
+        $requete->liste(array('*'));
+        $requete->liste(array($table), 'from');
+        $requete->liste(array($orderBy),'order by');
         $requete->setAscOrder();
         return $requete->query();
     }
@@ -16,14 +16,13 @@ class Repository{
     //On lui donne la table, le champ de la recherche et le champ recherché
     public function findBy($table, $where, $whereSearch){
         $requete = new Requete('select');
-        $requete->setListePart(array('*'));
-        $requete->setFromPart(array($table));
+        $requete->liste(array('*'));
+        $requete->liste(array($table), 'from');
+        $requete->where('?', '?');
+        $rslt = $requete->queryPrepare(array($where,$whereSearch));
         //
         // true pour utiliser $escape et lui mettre
         //
-        $requete->addWherePart($where,$whereSearch, true);
-        //echo $requete->toString();
-        $rslt = $requete->query();
         if (!$rslt){
             return false;
         }else{

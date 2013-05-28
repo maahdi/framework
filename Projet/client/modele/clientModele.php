@@ -17,18 +17,18 @@ class ClientModele extends Modele{
     public function deleteOneClient($client){
         $requete = new Requete('delete');
         $requete->setFromPart(array('clients'));
-        $requete->addWherePart('idClient','?');
+        $requete->where('idClient','?');
         $requete->queryPrepare(array($client->getIdClient()));
     }
 
     public function updateOneClient($client){
         $requete = new Requete('update');
-        $requete->setListePart(array('set nomClient = ?',
+        $requete->liste(array('set nomClient = ?',
                                      'prenomClient = ?',
                                      'adresseClient = ?',
                                      'cpClient = ?',
                                      'idPays = ?'),'clients');
-        $requete->addWherePart('idClient', '?');
+        $requete->where('idClient', '?');
         $requete->queryPrepare(array($client->getNomClient(),
                                      $client->getPrenomClient(),
                                      $client->getAdresseClient(),

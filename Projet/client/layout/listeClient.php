@@ -38,18 +38,26 @@ if ($this->getData('listeClient') != false){
 
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'adresseClient', 'texte',".$i.",'clients')\">".$valeur->getAdresseClient()."</td>";
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'cpClient', 'texte',".$i.",'clients')\">".$valeur->getCpClient()."</td>";
-        echo "<td class='texte'><select onchange=\"inlineModSelect(".$id.", this, 'idPays', 'entier',".$i.",'clients')\" name='idPays'>";
-        foreach ($this->getData('listePays') as $pays){
-            if ($pays->getIdPays() == $valeur->getIdPays()){
-                echo "<option value='".$valeur->getIdPays()."' selected>".$valeur->getNomPays()."</option>";
-            }else{            
-                echo "<option value='".$pays->getIdPays()."'>".$pays->getNomPays()."</option>";
+        if (!$this->getData('retour')){
+            echo "<td id='pays' class='texte'><select id='selPays' onchange=\"inlineModSelect(".$id.", this, 'idPays', 'entier',".$i.",'clients')\" name='idPays'>";
+            foreach ($this->getData('listePays') as $pays){
+                if ($pays->getIdPays() == $valeur->getIdPays()){
+                    echo '<option value=\''.$valeur->getIdPays().'\' selected>'.$valeur->getNomPays().'</option>';
+                }else{            
+                    echo '<option value=\''.$pays->getIdPays().'\'>'.$pays->getNomPays().'</option>';
+                }
             }
+            echo '<option value=\'nouveau\'>Nouveau</option>';
+            echo '</select></td>';
+        }else{
+            echo '<td>'.$valeur->getNomPays().'</td>'; 
         }
-        echo "</select></td>";
-        echo '<td ><a href="'._LIENDIR_.'modifierClient&idClient='.$key.'">modifier</a></td>';
-        echo '<td ><a href="'._LIENDIR_.'deleteClient&idClient='.$key.
+
+        if (!$this->getData('retour')){
+            echo '<td ><a href="'._LIENDIR_.'modifierClient&idClient='.$key.'">modifier</a></td>';
+            echo '<td ><a href="'._LIENDIR_.'deleteClient&idClient='.$key.
             '" onclick="if(!confirm("Voulez-vous vraiment supprimer l\'utilisateur '.$valeur->getNomClient().' ?")) return false;">supprimer</a></td></tr>';
+        }
         $i++;
     }
 ?>

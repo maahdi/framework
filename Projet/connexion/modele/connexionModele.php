@@ -15,8 +15,11 @@ class ConnexionModele extends Modele{
     }
     
     public function testIdentifiant(array $identifiant){
-        $resultat = $this->getTable(array('*'), array('utilisateurs'), $identifiant,
-                                    array('login','password'));
+        $requete = new Requete('select *');
+        $requete->liste(array('utilisateurs'),'from');
+        $requete->where('login','?');
+        $requete->where('password','?');
+        $resultat = $requete->queryPrepare($identifiant);
         if ($resultat->rowCount() == 1){
             $resultat->closeCursor();
             return true;

@@ -9,6 +9,7 @@
          <script type="text/javascript" src="/framework/utils/jquery-1.9.1.js"></script>
          <script type="text/javascript">
          $(document).ready(function(){
+                    });
              $('body').prepend('<div class="top_link"><a href="#top"  title="Revenir en haut de page"><img src="../images/flecheretour.png"></a></div>');
                  $('.top_link').css({  
                         'position'              :   'fixed',  
@@ -30,10 +31,6 @@
                 $('.top_link').fadeOut(400);  
         });  
     });
-    function test(){
-        
-    }
-     
  </script>
     </head>
     <body>

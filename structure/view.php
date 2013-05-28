@@ -9,19 +9,25 @@ class View{
     private $menuGauche = false;
     private $ajax = true;
 
+    //
     //inclue l'url fournie et si nécessaire enregistre les données fournies 
     //dans $data[]
+    //
     public function render($url,array $data = null){
         $this->setData($data);
         include ($url);
     }        
 
+    //
     //Fonction a utiliser sur le layout principal pour activer les vues
+    //
     public function generateFichier($fichier, $bundle){
         include _DIR_.'Projet/'.$bundle.'/layout/'.$fichier.'.php';
     }
 
+    //
     //Fournie les données contenue dans $data[] à l'index en paramètre
+    //
     public function getData($index){
         if (isset($this->data[$index])){
             return $this->data[$index];
@@ -30,12 +36,16 @@ class View{
         }
     }
 
+    //
     //Sert a afficher message erreur dans login.php
+    //
     public function setAction($action){
         $this->action = $action;
     }
 
+    //
     //Pour afficher le menu en fonction du module dans lequel on est
+    //
     public function setSubmenu($action){
         $this->menuGauche = $action;
     }
@@ -48,11 +58,13 @@ class View{
         return $this->ajax;
     }
 
+    //
     //Sert à choisir le sous-menu à afficher
     //contenu dans /Projet/layout/menu
+    //
     public function getMenu(){
         if ($this->menuGauche != false){
-            include _MENU_.$this->menuGauche.".php";
+            include _MENU_.$this->menuGauche.'.php';
         }
     }
 
@@ -64,8 +76,10 @@ class View{
         $this->render(_DIR_.'Projet/erreur/erreur.php');
     }
 
+    //
     //Permet d'enregistrer les données dans un même tableau $data[]
     //Pour y avoir accès dans la vue avec getData()
+    //
     public function setData($data){
         if ($data != null){
             $key = array_keys($data);                          

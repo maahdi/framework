@@ -1,12 +1,35 @@
 var editionEnCours = false;
 
+function retourSelect(valeur){
+    $.ajax({
+        type : 'POST',
+        url  : 'main.php?action=enregistrerAjax',
+        data : {nomPays : valeur},
+        success :function(data,textStatus, jqXHR){
+            $('#pays').prepend(data);
+        }
+            });
+}
+
 function inlineModSelect(id, obj, nomValeur, type, indiceLigne, table){
     if (editionEnCours){
         return false;
     }else{
         editionEnCours = true;
     }
-    sauverMod(id, obj, nomValeur, obj.options[obj.selectedIndex].value, type, indiceLigne, table, true);
+    if (obj.options[obj.selectedIndex].value == 'nouveau'){
+        $('#selPays').remove();
+        $('#pays').prepend('<input type="text" id="nomPays">');
+        $('#nomPays').bind('keydown keyup', function (e){
+                if (e.which === 13){
+                    valeur = $('#nomPays').val(); 
+                    sauverMod(id, obj, nomValeur, valeur, type, indiceLigne, table, true);
+                }
+                });
+    }else{
+        sauverMod(id, obj, nomValeur, obj.options[obj.selectedIndex].value, type, indiceLigne, table, true);
+    }
+    var t = 10;
 
 }
 

@@ -119,8 +119,6 @@ class ClientController extends Controller{
         if ($this->getFormValid()){
             $pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays');
             if ($pays == false){
-
-            echo 'lol';
                 //
                 // insertion du nouveau pays possible
                 //
@@ -136,9 +134,9 @@ class ClientController extends Controller{
                                                                     $valeur->getIdPays()));
                 }
             }
-            $data['listeClient'] = array($this->getRepository('clients')->getOne($_POST['idClient'],$pays));
+            $data['listeClient'] = array ($this->getRepository('clients')->getOne($_POST['idClient'],$pays));
             $this->view->setData(array('liste'     => true,
-                                       'listePays' => $this->pays));
+                                       'retour' => true));
             $this->view->turnOffAjax();
             $this->view->render($this->url, $data);
         }else{

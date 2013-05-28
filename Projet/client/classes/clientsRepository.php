@@ -42,6 +42,7 @@ class ClientsRepository extends Repository{
                     $valeur->adresseClient, 
                     $valeur->cpClient, 
                     $pays[$valeur->idPays]);
+                    echo $valeur->idPays;
             }
             return $liste;
         }else{
@@ -50,7 +51,10 @@ class ClientsRepository extends Repository{
     }
 
     public function getOne($whereSearch, $pays){
-        $resultat = $this->findBy('clients','idClient',$whereSearch);
+        $requete = new Requete('select *');
+        $requete->liste(array('from clients'));
+        $requete->where('idClient','?');
+        $resultat = $requete->queryPrepare(array($whereSearch));
         if ($resultat != false){
             //$client mis a false automatiquement
             //Dans le controller le resultat de cette fonction
@@ -73,27 +77,27 @@ class ClientsRepository extends Repository{
 
     public function insertOne(array $values){
         $requete = new Requete('insert into');
-        $requete->setListePart(array('clients'));
-        $requete->setListePart(array('?,?,?,?,?,?,?'), 'values(',')');
+        $requete->liste(array('clients'));
+        $requete->liste(array('?,?,?,?,?,?,?'), 'values(',')');
         $requete->queryPrepare($values);
     }
 
     public function getBy($where,$whereSearched, $pays){
         $requete = new Requete('select');
-        $requete->setListePart(array('*'));
+        $requete->liste(array('*'));
         $requete->setFromPart(array('clients'));
         if (is_numeric($whereSearched)){
-            //$requete->setListePart(array($where), '?');
-            $requete->setListePart(array($where), 'where', "like '%$whereSearched%'");
+            //$requete->liste(array($where), '?');
+            $requete->liste(array($where), 'where', "like '%$whereSearched%'");
             $resultat = $requete->queryPrepare(array("%$whereSearched%"));
         }else{
             //if ($where == 'adresseClient'){
-            $requete->setListePart(array("upper($where)"), 
+            $requete->liste(array("upper($where)"), 
             'where',
             "like '%$whereSearched%'");
             $resultat = $requete->queryPrepare(array("%$whereSearched%"));
             //}else{
-            //    $requete->addWherePart($where,'?');
+            //    $requete->where($where,'?');
             //    $resultat = $requete->queryPrepare(array($whereSearched));
             //}
         }
@@ -101,13 +105,11 @@ class ClientsRepository extends Repository{
     }
 
     public function getByNomOrPrenom($whereSearch, $pays){
-        $requete = new Requete('select');
-        $requete->setListePart(array('*'));
-        $requete->setFromPart(array('clients'));
-        $requete->setListePart(array('upper(nomClient)'), 
+        $requete = new Requete('select *');
+        $requete->liste(array('upper(nomClient)','from'), 
         'where',
         "like '%$whereSearch%'");
-        $requete->setListePart(array('upper(prenomClient)'), 
+        $requete->liste(array('upper(prenomClient)'), 
         'or',
         "like '%$whereSearch%'");
         $resultat = $requete->query();

@@ -3,27 +3,32 @@ include _DIR_.'ORM/pdo/pdo.php';
 
 class Requete{
     private $mysql;
-    private $wherePart = 'where ';
+    private $where = 'where ';
     private $requete='';
     private $pdostatement=true;
+    private $disable = false;
     
     //On peut appeler Requete en spécifiant une commande SQL ou non
     //Met l'objet PDOStatement en mode objet;
     public function __construct($commande = null) {
         $this->mysql = DB::getInstance();
         if ($commande != null){
-            $this->requete = $commande." ";
+            $this->requete = $commande.' ';
         }
+        $this->disable = false;
     }
-    
-    public function resetRequete(){
-        $this->requete = "";
-        $this->pdostatement->closeCursor();
-        $this->wherePart = 'where ';
+
+    //
+    //Appeler automatiquement après un execute()
+    //
+    private function resetRequete(){
+        $this->requete = '';
+        //$this->pdostatement->closeCursor();
+        $this->where = 'where ';
     }
     
     public function setfromPart(array $liste){
-        $this->requete .= " from ".$this->addVirgule($liste);
+        $this->requete .= ' from '.$this->addVirgule($liste);
     }
 
     public function queryPrepare(array $valeur){
@@ -37,14 +42,22 @@ class Requete{
             }
             $i++;
         }
-        $this->pdostatement->execute($valeur);
+        if ($this->disable){
+         $exec = $this->secureDonnees($valeur);    
+         $this->disable = false;
+        }else{
+            $exec = $valeur;
+        }
+        $this->pdostatement->execute($exec);
         if ($this->pdostatement == null){
             return false;
         }else{
             $this->setFetchModObj();
+            $this->resetRequete();
             return $this->pdostatement;
         }
     }
+
     public function query(){
         $this->pdostatement = $this->mysql->query($this->requete);
         if ($this->pdostatement == null){
@@ -56,26 +69,22 @@ class Requete{
     }
     
     public function setAscOrder(){
-        $this->requete .= "ASC";
+        $this->requete .= 'ASC';
     }
     
     public function setDescOrder(){
-        $this->requete .= "DESC";
+        $this->requete .= 'DESC';
     }
     
-    public function setListePart(array $liste, $entete = null, $pied = null){
+    public function liste(array $liste, $entete = null, $pied = null){
         if (isset($entete)){
-            $this->requete .= $entete." ".$this->addVirgule($liste);
+            $this->requete .= $entete.' '.$this->addVirgule($liste);
         }else{
             $this->requete .= $this->addVirgule($liste);
         }
         if (isset($pied)){
-            $this->requete .= $pied." ";
+            $this->requete .= $pied.' ';
         }
-    }
-
-    public function setListeTable(array $liste, $entete = null){
-        $this->setListePart($liste, $entete);
     }
 
     public function toString(){
@@ -85,30 +94,29 @@ class Requete{
     // $choix : null pour le premier après on choisi AND ou OR 
     // Par default AND
     //
-    public function addWherePart($champ,$valeur, $escape = null, $choix = null){
+    public function where($champ,$valeur, $escape = null, $choix = null){
         if ((!($valeur == '?')) && $choix == true){
             $valeur = '\''.$valeur.'\'';
         }
         if ($choix == null){
             $choix ='and';
         }
-        if ($this->wherePart == 'where '){
-            $this->wherePart = $this->addEgal($champ, $valeur, $this->wherePart);
+        if ($this->where == 'where '){
+            $this->where = $this->addEgal($champ, $valeur, $this->where);
         }else{
-            $this->wherePart = ' '.$choix.' ';
-            $this->wherePart = $this->addEgal($champ, $valeur, $this->wherePart);
+            $this->where = ' '.$choix.' ';
+            $this->where = $this->addEgal($champ, $valeur, $this->where);
         }
-        $this->requete .= $this->wherePart." ";
-        $this->wherePart = "";
+        $this->requete .= $this->where.' ';
+        $this->where = '';
     }
     
     private function setFetchModObj(){
             $this->pdostatement->setFetchMode(PDO::FETCH_OBJ);
-           // return $pdostatement;
     }
     
-    private function addEgal($Champ, $Valeur, $req){
-        $req .= $Champ."=".$Valeur;
+    private function addEgal($champ, $Valeur, $req){
+        $req .= $champ.'='.$Valeur;
         return $req;
     }
     
@@ -118,7 +126,7 @@ class Requete{
         for ($i = 0 ; $i< $nb; $i++){
                 $req .= "$liste[$i] ";
                 if ($i != $nb-1){
-                    $req .= ", ";
+                    $req .= ', ';
                 }
             }
             return $req;
