@@ -30,3 +30,4 @@ $routes['factureClient']                = 'afficheFacture/facturation/Client';//
 $routes['suiviClient']                  = 'afficherSuivi/facturation/Client';//Idem
 $routes['ajouterArticleComClient']      = 'ajouterArticle/facturation/Client';
 $routes['supprimerOneArticle']          = 'supprimerOneArticle/facturation/Client';
+$routes['deleteCommande']               = 'deleteCommande/facturation/Client';

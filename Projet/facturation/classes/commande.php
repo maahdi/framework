@@ -6,7 +6,7 @@ class Commande{
     private $listeArticle = array();
     private $totalHT = 0;
     private $totalTTC = 0;
-    private $tva = 0;
+    private $totalTVA = 0;
     private $valid = false;
     private $remise;
     
@@ -66,8 +66,8 @@ class Commande{
         return $this->remise;
     }
 
-    public function getTva(){
-        return $this->tva;
+    public function getTotalTVA(){
+        return $this->totalTVA;
     }
 
     public function setQteCmd($idArticle, $qte){
@@ -133,24 +133,22 @@ class Commande{
     //   totalHT
     //   tva
     //   totalTTC
+    //  AVANT d'utiliser l'objet commande
     //
     public function setTotaux($idArticle = null){
+        $this->totalHT  = 0;
+        $this->totalTVA = 0;
+        $this->totalTTC = 0;
         if ($idArticle != null){
-            $this->totalHT  += $this->listeArticle[$idArticle]->getPrixHT()*$this->listeArticle[$idArticle]->getQteCmd();
-            $this->tva      = $this->totalHT * $this->listeArticle[$idArticle]->getTauxTVA()/100;
-            $this->totalTTC = $this->totalHT + $this->tva;
+            $this->totalHT   += (float) $this->listeArticle[$idArticle]->getPrixHT() * (int) $this->listeArticle[$idArticle]->getQteCmd();
+            $this->totalTVA  += $this->totalHT * (float) $this->listeArticle[$idArticle]->getTauxTVA()/100;
+            $this->totalTTC  += $this->totalHT + $this->totalTVA;
         }else{
-            $totalTVA = 0;
-            $totalHT  = 0;
-            $totalTTC = 0;
             foreach($this->listeArticle as $valeur){
-                $totalHT  += $valeur->getPrixHT()*$valeur->getQteCmd();
-                $totalTVA += $totalHT * $valeur->getTauxTVA()/100;
-                $totalTTC += $totalHT + $totalTVA;
+                $this->totalHT   += (float) $valeur->getTotalHT();
+                $this->totalTVA  += (float) $valeur->getTotalHT() * (float) $valeur->getTauxTVA()/100;
             }
-            $this->totalHT  = $totalHT;
-            $this->totalTVA = $totalTVA;
-            $this->totalTTC = $totalTTC;
+            $this->totalTTC  = (float) $this->totalHT + (float) $this->totalTVA;
         }
     }
 }

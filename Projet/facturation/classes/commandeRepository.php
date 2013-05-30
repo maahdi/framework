@@ -42,7 +42,6 @@ class CommandeRepository extends Repository{
         foreach ($listeProduit as $valeur){
             $liste[$valeur->idCmd]->setOneArticle($articles[$valeur->idArticle]);
             $liste[$valeur->idCmd]->setQteCmd($valeur->idArticle, $valeur->qteCmd);
-            $liste[$valeur->idCmd]->setTotaux($valeur->idArticle);
         }
         foreach ($commandes as $valeur){
             $liste[$valeur->idCmd]->setDateCmd($valeur->dateCmd);
@@ -52,6 +51,7 @@ class CommandeRepository extends Repository{
             }else{
                 $unValid [$valeur->idCmd] = $valeur->idCmd;
             }
+            $liste[$valeur->idCmd]->setTotaux();
         }
         return $this->checkValid($liste, $unValid, $factOrCom);
     }
@@ -103,46 +103,82 @@ class CommandeRepository extends Repository{
 
     //
     // Enregistre une commande deja créer
+    // $idArticle null -> lors de la suppression on enregistre la commande
+    // après la suppression de l'enregistrement dans produitcmd
     //
-    public function updateOne(Commande $commande, $lastId){
+    public function updateOne(Commande $commande, $idArticle = null){
         $requete = new Requete('update commandes');
         $requete->liste(array('set idClient = ?',
                                      'totalHT = ?',
                                      'totalTVA = ?',
+                                     'totalTTC = ?',
                                      'valid = ?'));
         $requete->where('idCmd','?');
         $requete->queryPrepare(array($commande->getIdClient(),
                                      $commande->getTotalHT(),
-                                     $commande->getTva(),
+                                     $commande->getTotalTVA(),
+                                     $commande->getTotalTTC(),
                                      $commande->getValidationCommande(),
                                      $commande->getIdCmd()));
-        $requete->liste(array('insert into produitcmd'));
-        $requete->liste(array('idArticle',
-                                     'idCmd',
-                                     'qteCmd',
-                                     'totalHT'),'(',')');
-        $requete->liste(array('?,?,?,?'),'values(',')');
-        $requete->queryPrepare(array($lastId,
-                                     $commande->getIdCmd(),
-                                     $commande->getQteCmd($lastId),
-                                     $commande->getTotalHTArticle($lastId)));
+        //
+        //Si l'article est un nouveau on insert sinon on update la quantite et le totalht
+        //
+        foreach ($commande->getListeArticle() as $valeur){
+            if ($valeur->getIdArticle() != $idArticle){
+                $requete->liste(array('update produitcmd'));
+                $requete->liste(array('set qteCmd = ?',
+                                      'totalHT = ?'));
+                $requete->where('idArticle', '?');
+                $requete->where('idCmd', '?');
+                $requete->queryPrepare(array($valeur->getQteCmd(),
+                                             $valeur->getTotalHT(),
+                                             $valeur->getIdArticle(),
+                                             $commande->getIdCmd()));
+            }else{
+                //
+                //On vérifie que le produit n'as pas était deja insérer
+                //Cas d'un rafraichissement de la page de modification des commandes
+                //
+                $requete->liste(array('select idArticle'));
+                $requete->liste(array('from produitcmd'));
+                $requete->where('idArticle','?');
+                if (!$requete->queryPrepare(array($idArticle))){
+                    $requete->liste(array('insert into produitcmd'));
+                    $requete->liste(array('qteCmd',
+                                          'totalHT',
+                                          'idArticle',
+                                          'idCmd'),'(',')');
+                    $requete->liste(array('?,?,?,?'),'values(',')');
+                    $requete->queryPrepare(array($commande->getQteCmd($idArticle),
+                                                 $commande->getTotalHTArticle($idArticle),
+                                                 $idArticle,
+                                                 $commande->getIdCmd()));
+                }
+            }
+        }
     }
 
-    public function insertOne($idCmd, $idClient, $date, $qte, $idArticle){
+    //public function insertOne($idCmd, $idClient, $date, $qte, $idArticle){
+    public function insertOne($commande){
         $requete = new Requete('insert into');
         $requete->liste(array('commandes'));
-        $requete->liste(array('idCmd','idClient', 'dateCmd'),'(',')');
-        $requete->liste(array('?,?,?'),'values(',')');
-        $requete->queryPrepare(array($idCmd, 
-                                     $idClient,
-                                     $date));
-        $requete->resetRequete();
-        $requete->liste(array('produitcmd'),'insert into');
-        $requete->liste(array('idCmd','idArticle', 'qteCmd'),'(',')');
-        $requete->liste(array('?,?,?'), 'values(',')');
-        $requete->queryPrepare(array($idCmd,
-                                     $idArticle,
-                                     $qte));
+        $requete->liste(array('idCmd','idClient', 'dateCmd','totalHT', 'totalTVA', 'totalTTC'),'(',')');
+        $requete->liste(array('?,?,?,?,?,?'),'values(',')');
+        $requete->queryPrepare(array($commande->getIdCmd(), 
+                                     $commande->getIdClient(),
+                                     $commande->getDateCmd(),
+                                     $commande->getTotalHT(),
+                                     $commande->getTotalTVA(),
+                                     $commande->getTotalTTC()));
+        foreach ($commande->getListeArticle() as $valeur){
+            $requete->liste(array('produitcmd'),'insert into');
+            $requete->liste(array('idCmd','idArticle', 'qteCmd','totalHT'),'(',')');
+            $requete->liste(array('?,?,?,?'), 'values(',')');
+            $requete->queryPrepare(array($commande->getIdCmd(),
+                                         $valeur->getIdArticle(),
+                                         $valeur->getQteCmd(),
+                                         $valeur->getTotalHT()));
+        }
     }
 
     //

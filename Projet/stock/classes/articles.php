@@ -17,16 +17,16 @@ class Article{
             $this->idArticle = $idArticle;
             $this->designation = $designation;
             $this->refArticle = $refArticle;
-            $this->prixHT = $prixHT;
-            $this->txTVA = $txTVA;
+            $this->prixHT = (float) $prixHT;
+            $this->txTVA = (float) $txTVA;
             $this->prixTTC = round($this->prixHT * (1 + ($this->txTVA / 100)),3);
-            $this->stock = $stock;
+            $this->stock = (int) $stock;
             $this->fournisseur = $fournisseur;
-            $this->qteCmd = $qte;
+            $this->qteCmd = (int) $qte;
     }
 
     public function setQuantiteCmd($qte){
-        $this->qteCmd = $qte;
+        $this->qteCmd = (int) $qte;
         $this->totalHT = $qte * $this->prixHT;
     }
 
@@ -70,7 +70,7 @@ class Article{
     }
 
     public function setStock($newStock){
-        $this->stock = $newStock;
+        $this->stock = (int) $newStock;
     }
 
     public function setDesignation($newDes){
