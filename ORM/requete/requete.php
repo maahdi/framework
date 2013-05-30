@@ -6,7 +6,6 @@ class Requete{
     private $where = 'where ';
     private $requete='';
     private $pdostatement=true;
-    private $disable = false;
     
     //On peut appeler Requete en spécifiant une commande SQL ou non
     //Met l'objet PDOStatement en mode objet;
@@ -23,7 +22,7 @@ class Requete{
     //
     private function resetRequete(){
         $this->requete = '';
-        //$this->pdostatement->closeCursor();
+        $this->pdostatement = false;
         $this->where = 'where ';
     }
     
@@ -42,19 +41,15 @@ class Requete{
             }
             $i++;
         }
-        if ($this->disable){
-         $exec = $this->secureDonnees($valeur);    
-         $this->disable = false;
-        }else{
-            $exec = $valeur;
-        }
-        $this->pdostatement->execute($exec);
+        
+        $this->pdostatement->execute($valeur);
         if ($this->pdostatement == null){
             return false;
         }else{
             $this->setFetchModObj();
+            $retour = $this->pdostatement;
             $this->resetRequete();
-            return $this->pdostatement;
+            return $retour;
         }
     }
 
@@ -64,7 +59,9 @@ class Requete{
             return false;
         }else{
             $this->setFetchModObj();
-            return $this->pdostatement;
+            $retour = $this->pdostatement;
+            $this->resetRequete();
+            return $retour;
         }
     }
     

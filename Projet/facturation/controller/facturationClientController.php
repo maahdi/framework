@@ -54,8 +54,6 @@ class FacturationClientController extends Controller{
 
     public function displayAllCommande(){
         $data['listeCommande'] = $this->getAllCommande('com');
-        unset($clients);
-        unset($articles);
         $this->setData(array('liste' => true));
         $this->view->render($this->url, $data);
     }

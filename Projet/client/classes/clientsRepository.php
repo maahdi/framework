@@ -35,14 +35,27 @@ class ClientsRepository extends Repository{
     private function constructClients($resultat, $pays){
         if ($resultat->rowCount() > 0){
             foreach ($resultat as $valeur){
-                $liste[$valeur->idClient] = new Clients($valeur->idClient, 
-                    $valeur->nomClient,
-                    $valeur->prenomClient, 
-                    $valeur->emailClient,
-                    $valeur->adresseClient, 
-                    $valeur->cpClient, 
-                    $pays[$valeur->idPays]);
-                    echo $valeur->idPays;
+                if (is_array($pays)){
+                    foreach($pays as $p){
+                        if ($p->getIdPays() == $valeur->idPays){
+                            $liste[$valeur->idClient] = new Clients($valeur->idClient, 
+                                                                    $valeur->nomClient,
+                                                                    $valeur->prenomClient, 
+                                                                    $valeur->emailClient,
+                                                                    $valeur->adresseClient, 
+                                                                    $valeur->cpClient, 
+                                                                    $p);
+                        }
+                    }
+                }else{
+                    $liste[$valeur->idClient] = new Clients($valeur->idClient, 
+                        $valeur->nomClient,
+                        $valeur->prenomClient, 
+                        $valeur->emailClient,
+                        $valeur->adresseClient, 
+                        $valeur->cpClient, 
+                        $pays[$valeur->idPays]);
+                }
             }
             return $liste;
         }else{

@@ -89,8 +89,8 @@ class CommandeRepository extends Repository{
         $requete->liste(array('idArticle', 'qteCmd'),'select');
         $requete->liste(array('produitcmd'),'from');
         $requete->where('idCmd','?');
-        $rslt = $requete->queryPrepare(array($idCmd));
-        foreach($rslt as $valeur){
+        $rslt2 = $requete->queryPrepare(array($idCmd));
+        foreach($rslt2 as $valeur){
             $commande->setOneArticle($articles[$valeur->idArticle]);
             $commande->setQteCmd($valeur->idArticle, $valeur->qteCmd);
         }
@@ -116,8 +116,6 @@ class CommandeRepository extends Repository{
                                      $commande->getTva(),
                                      $commande->getValidationCommande(),
                                      $commande->getIdCmd()));
-
-        $requete->resetRequete();
         $requete->liste(array('insert into produitcmd'));
         $requete->liste(array('idArticle',
                                      'idCmd',
