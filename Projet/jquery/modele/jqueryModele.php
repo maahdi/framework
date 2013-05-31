@@ -29,5 +29,6 @@ class JqueryModele extends Modele{
         }
         $requete->where($primaryKey, $where);
         $requete->queryPrepare($listeValeur);
+        unset($requete);
     }
 }

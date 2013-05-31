@@ -14,6 +14,7 @@ class PaysRepository extends Repository{
         $requete->liste(array('pays'), 'from');
         $requete->where($champ,'?');
         $resultat = $requete->queryPrepare(array($search));
+        unset($requete);
         return $this->constructPays($resultat);
     }
 

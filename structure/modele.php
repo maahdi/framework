@@ -8,15 +8,19 @@ class Modele{
     public function getTable(array $listeChamps, array $listeTable, array $whereSearch = null, array $where = null){
         $requete = new Requete('select');
         $requete->liste($listeChamps);
-        $requete->setfromPart($listeTable);
+        $requete->from($listeTable);
         if ($whereSearch != null && $where != null && count($where) > 0){
             foreach ($where as $champ){
                 $requete->where($champ, '?');
             }
-            return $requete->queryPrepare($whereSearch);
+            $retour = $requete->queryPrepare($whereSearch);
+            unset($requete);
+            return $retour; 
 
         }else{
-            return $requete->query();
+            $retour = $requete->query();
+            unset($requete);
+            return $retour;
         }
     }
     
@@ -27,6 +31,7 @@ class Modele{
         $requete->liste($listeValeur,' values (',')');
         $requete->where($where, $whereSearch);
         $requete->query();
+        unset($requete);
     }
     
     public function getRequete($commande){

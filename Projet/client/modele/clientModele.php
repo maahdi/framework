@@ -19,6 +19,7 @@ class ClientModele extends Modele{
         $requete->setFromPart(array('clients'));
         $requete->where('idClient','?');
         $requete->queryPrepare(array($client->getIdClient()));
+        unset($requete);
     }
 
     public function updateOneClient($client){
@@ -35,7 +36,7 @@ class ClientModele extends Modele{
                                      $client->getCpClient(),
                                      $client->getIdPays(),
                                      $client->getIdClient()));
-        
+        unset($requete);
     }
 
 }

@@ -109,6 +109,7 @@ class FacturationClientController extends Controller{
             //
             $commande = $this->unserializedObjet($this->urlCommande);
             $this->modificationOneCommande($commande);
+            echo $_GET['idArticle'];
             $this->getRepository('commande')->updateOne($commande, $_GET['idArticle']);
         }else{
             $commande = $this->getRepository('commande')->getNewCommande($_GET['idCmd']);

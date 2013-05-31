@@ -3,7 +3,7 @@ include _DIR_.'ORM/pdo/pdo.php';
 
 class Requete{
     private $mysql;
-    private $where = 'where ';
+    private $where = true;
     private $requete='';
     private $pdostatement=true;
     
@@ -14,19 +14,18 @@ class Requete{
         if ($commande != null){
             $this->requete = $commande.' ';
         }
-        $this->disable = false;
     }
 
     //
     //Appeler automatiquement après un execute()
     //
     private function resetRequete(){
-        $this->requete = '';
+        $this->requete = false;
         $this->pdostatement = false;
-        $this->where = 'where ';
+        $this->where = true;
     }
     
-    public function setfromPart(array $liste){
+    public function from(array $liste){
         $this->requete .= ' from '.$this->addVirgule($liste);
     }
 
@@ -43,7 +42,8 @@ class Requete{
         }
         
         $this->pdostatement->execute($valeur);
-        if ($this->pdostatement == null){
+        if ($this->pdostatement->rowCount() == 0){
+            $this->resetRequete();
             return false;
         }else{
             $this->setFetchModObj();
@@ -56,6 +56,7 @@ class Requete{
     public function query(){
         $this->pdostatement = $this->mysql->query($this->requete);
         if ($this->pdostatement == null){
+            $this->resetRequete();
             return false;
         }else{
             $this->setFetchModObj();
@@ -91,21 +92,21 @@ class Requete{
     // $choix : null pour le premier après on choisi AND ou OR 
     // Par default AND
     //
-    public function where($champ,$valeur, $escape = null, $choix = null){
+    public function where($champ,$valeur, $choix = null){
         if ((!($valeur == '?')) && $choix == true){
             $valeur = '\''.$valeur.'\'';
         }
         if ($choix == null){
-            $choix ='and';
+            $choix = 'and';
         }
-        if ($this->where == 'where '){
-            $this->where = $this->addEgal($champ, $valeur, $this->where);
+        $where = '';
+        if ($this->where){
+            $where = 'where ' .$this->addEgal($champ, $valeur, $where);
+            $this->where = false;
         }else{
-            $this->where = ' '.$choix.' ';
-            $this->where = $this->addEgal($champ, $valeur, $this->where);
+            $where = $choix.' '.$this->addEgal($champ, $valeur, $where);
         }
-        $this->requete .= $this->where.' ';
-        $this->where = '';
+        $this->requete .= $where.' ';
     }
     
     private function setFetchModObj(){

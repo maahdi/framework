@@ -66,7 +66,7 @@ class ClientsRepository extends Repository{
     public function getOne($whereSearch, $pays){
         $requete = new Requete('select *');
         $requete->liste(array('from clients'));
-        $requete->where('idClient','?');
+        $requete->liste(array('where idClient = ?'));
         $resultat = $requete->queryPrepare(array($whereSearch));
         if ($resultat != false){
             //$client mis a false automatiquement
@@ -86,6 +86,7 @@ class ClientsRepository extends Repository{
         }else{
             return false;
         }
+        unset($requete);
     }
 
     public function insertOne(array $values){
@@ -93,6 +94,7 @@ class ClientsRepository extends Repository{
         $requete->liste(array('clients'));
         $requete->liste(array('?,?,?,?,?,?,?'), 'values(',')');
         $requete->queryPrepare($values);
+        unset($requete);
     }
 
     public function getBy($where,$whereSearched, $pays){
@@ -114,6 +116,7 @@ class ClientsRepository extends Repository{
             //    $resultat = $requete->queryPrepare(array($whereSearched));
             //}
         }
+        unset($requete);
         return $this->constructClients($resultat, $pays);
     }
 
@@ -126,6 +129,7 @@ class ClientsRepository extends Repository{
         'or',
         "like '%$whereSearch%'");
         $resultat = $requete->query();
+        unset($requete);
         return $this->constructClients($resultat, $pays);
     }
 

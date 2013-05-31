@@ -98,6 +98,7 @@ class CommandeRepository extends Repository{
         //
         //Retour comme sa car checkValid renvoi un tableau associatif
         //
+        unset($requete);
         return $this->checkValid(array($commande), $unValid, $factOrCom); 
     }
 
@@ -113,7 +114,7 @@ class CommandeRepository extends Repository{
                                      'totalTVA = ?',
                                      'totalTTC = ?',
                                      'valid = ?'));
-        $requete->where('idCmd','?');
+        $requete->liste(array(' where idCmd = ?'));
         $requete->queryPrepare(array($commande->getIdClient(),
                                      $commande->getTotalHT(),
                                      $commande->getTotalTVA(),
@@ -124,38 +125,46 @@ class CommandeRepository extends Repository{
         //Si l'article est un nouveau on insert sinon on update la quantite et le totalht
         //
         foreach ($commande->getListeArticle() as $valeur){
-            if ($valeur->getIdArticle() != $idArticle){
+            if ($valeur->getIdArticle() != $idArticle ){
                 $requete->liste(array('update produitcmd'));
                 $requete->liste(array('set qteCmd = ?',
                                       'totalHT = ?'));
-                $requete->where('idArticle', '?');
-                $requete->where('idCmd', '?');
+                $requete->where('idArticle', '?',null);
+                echo $requete->toString().'pppppppp';
+                $requete->where('idCmd', '?','and');
+                echo $requete->toString().'lllllllll';
                 $requete->queryPrepare(array($valeur->getQteCmd(),
                                              $valeur->getTotalHT(),
                                              $valeur->getIdArticle(),
                                              $commande->getIdCmd()));
             }else{
                 //
-                //On vérifie que le produit n'as pas était deja insérer
+                //On vérifie que le produit n'as pas été deja insérer
                 //Cas d'un rafraichissement de la page de modification des commandes
                 //
-                $requete->liste(array('select idArticle'));
-                $requete->liste(array('from produitcmd'));
-                $requete->where('idArticle','?');
-                if (!$requete->queryPrepare(array($idArticle))){
-                    $requete->liste(array('insert into produitcmd'));
-                    $requete->liste(array('qteCmd',
-                                          'totalHT',
-                                          'idArticle',
-                                          'idCmd'),'(',')');
-                    $requete->liste(array('?,?,?,?'),'values(',')');
-                    $requete->queryPrepare(array($commande->getQteCmd($idArticle),
-                                                 $commande->getTotalHTArticle($idArticle),
-                                                 $idArticle,
-                                                 $commande->getIdCmd()));
+                if ($idArticle != null){
+                    $requete->liste(array('select idArticle'));
+                    $requete->liste(array('from produitcmd'));
+                    $requete->where('idArticle','?');
+                    $requete->where('idCmd','?');
+                    echo $idArticle;
+                    echo $commande->getIdCmd();
+                    if ($requete->queryPrepare(array($idArticle,$commande->getIdCmd())) == false){ 
+                        $requete->liste(array('insert into produitcmd'));
+                        $requete->liste(array('qteCmd',
+                                              'totalHT',
+                                              'idArticle',
+                                              'idCmd'),'(',')');
+                        $requete->liste(array('?,?,?,?'),'values(',')');
+                        $requete->queryPrepare(array($commande->getQteCmd($idArticle),
+                                                     $commande->getTotalHTArticle($idArticle),
+                                                     $idArticle,
+                                                     $commande->getIdCmd()));
+                    }
                 }
             }
         }
+        unset($requete);
     }
 
     //public function insertOne($idCmd, $idClient, $date, $qte, $idArticle){
@@ -179,6 +188,7 @@ class CommandeRepository extends Repository{
                                          $valeur->getQteCmd(),
                                          $valeur->getTotalHT()));
         }
+        unset($requete);
     }
 
     //

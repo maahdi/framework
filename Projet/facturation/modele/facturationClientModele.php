@@ -25,6 +25,7 @@ class FacturationClientModele extends Modele{
             $requete->where($valeur, '?');
         }
         $requete->queryPrepare($value);
+        unset($requete);
     }
 
 }
