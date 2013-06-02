@@ -39,4 +39,23 @@ class FacturationClientModele extends Modele{
         unset($requete);
     }
 
+    public function deleteCommande($idCmd){
+        $requete = new Requete ('select idArticle, qteCmd');
+        $requete->liste(array('produitcmd'), 'from');
+        $requete->where('idCmd', '?');
+        $pdoStatement = $requete->queryPrepare(array($idCmd));
+        foreach ($pdoStatement as $valeur){
+            $requete->liste(array('update articles'));
+            $requete->liste(array('set stockTheorique = stockTheorique + ?'));
+            $requete->where('idArticle','?');
+            $requete->queryPrepare(array($valeur->qteCmd, $valeur->idArticle));
+        }
+        $requete->liste(array('delete from commandes'));
+        $requete->where('idCmd', '?');
+        $requete->queryPrepare(array($idCmd));
+        $requete->liste(array('delete from produitcmd'));
+        $requete->where('idCmd', '?');
+        $requete->queryPrepare(array($idCmd));
+    }
+
 }

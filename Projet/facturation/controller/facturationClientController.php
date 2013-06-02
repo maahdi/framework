@@ -158,8 +158,14 @@ class FacturationClientController extends Controller{
                                    'dateCmd'            => time()));
         $this->view->render($this->url, $data); 
     }
+    public function deleteCommande(){
+       $this->modele->deleteCommande($_GET['idCmd']); 
+       $this->displayAllCommande();
+    }
 
+    //
     // Retourne array(id => valeur)
+    //
     private function getNewId(){
         $data = array();
         $id = $this->modele->getAllId('idCmd', 'commandes');
