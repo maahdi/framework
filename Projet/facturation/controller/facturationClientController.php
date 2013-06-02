@@ -53,6 +53,9 @@ class FacturationClientController extends Controller{
     }
 
     public function displayAllCommande(){
+        if (is_file($this->urlCommande)){
+            unlink($this->urlCommande);
+        }
         $data['listeCommande'] = $this->getAllCommande('com');
         $this->setData(array('liste' => true));
         $this->view->render($this->url, $data);
@@ -109,7 +112,6 @@ class FacturationClientController extends Controller{
             //
             $commande = $this->unserializedObjet($this->urlCommande);
             $this->modificationOneCommande($commande);
-            echo $_GET['idArticle'];
             $this->getRepository('commande')->updateOne($commande, $_GET['idArticle']);
         }else{
             $commande = $this->getRepository('commande')->getNewCommande($_GET['idCmd']);
@@ -129,7 +131,6 @@ class FacturationClientController extends Controller{
 
     public function supprimerOneArticle(){
         $this->modele->supprimerOneArticleCommande(array ('idArticle','idCmd'),array($_GET['idArticle'],$_GET['idCmd']), 'produitcmd');
-
         $liste = $this->getOneCommande($_GET['idCmd'],'com');
         $commande = $liste[$_GET['idCmd']];
         $commande->setTotaux();

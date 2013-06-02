@@ -23,7 +23,7 @@ class Commande{
         $nb = count($this->listeArticle);
         foreach($this->listeArticle as $valeur){
             if ($i < $nb){
-                $rslt .= $valeur->getDesignation();
+                $rslt .= $valeur['article']->getDesignation();
                 if ($i != ($nb-1)){
                     $rslt .= ', ';
                 }else{
@@ -43,15 +43,23 @@ class Commande{
         }
     }
 
+    public function getStockTheorique($idArticle){
+        return $this->listeArticle[$idArticle]['article']->getStockTheorique();
+    }
+
     public function getTotalHTArticle($id){
-        return $this->listeArticle[$id]->getTotalHT();
+        return $this->listeArticle[$id]['totalHT'];
+//        return $this->listeArticle[$id]->getTotalHT();
     }
 
     public function setClient($client){
         $this->client = $client;
     }
+
     public function setOneArticle($article){
-        $this->listeArticle[$article->getIdArticle()] = $article;
+        $this->listeArticle[$article->getIdArticle()] = array( 'article'  => $article,
+                                                               'qte'      => 'vide',
+                                                               'totalHT'  => 'vide');
     }
 
     public function setDateCmd($date){
@@ -71,7 +79,10 @@ class Commande{
     }
 
     public function setQteCmd($idArticle, $qte){
-        $this->listeArticle[$idArticle]->setQuantiteCmd($qte);
+        $this->listeArticle[$idArticle]['totalHT'] = $this->listeArticle[$idArticle]['article']->getPrixHT() * (int) $qte;
+        $this->listeArticle[$idArticle]['qte'] = (int) $qte;
+        $this->listeArticle[$idArticle]['article']->setStockTheorique((int) $qte, '-');
+        //$this->listeArticle[$idArticle]->setQuantiteCmd($qte);
     }
     
     public function getIdCmd(){
@@ -110,7 +121,8 @@ class Commande{
     }
 
     public function getQteCmd($idArticle){
-        return $this->listeArticle[$idArticle]->getQteCmd();
+        return $this->listeArticle[$idArticle]['qte'];
+        //return $this->listeArticle[$idArticle]->getQteCmd();
     }
 
     public function setValidation(){
@@ -140,13 +152,15 @@ class Commande{
         $this->totalTVA = 0;
         $this->totalTTC = 0;
         if ($idArticle != null){
-            $this->totalHT   += (float) $this->listeArticle[$idArticle]->getPrixHT() * (int) $this->listeArticle[$idArticle]->getQteCmd();
-            $this->totalTVA  += $this->totalHT * (float) $this->listeArticle[$idArticle]->getTauxTVA()/100;
-            $this->totalTTC  += $this->totalHT + $this->totalTVA;
+            $this->totalHT  += (float) $this->listeArticle[$idArticle]['article']->getPrixHT() * (int) $this->listeArticle[$idArticle]['qte'];
+            $this->totalTVA += $this->totalHT * (float) $this->listeArticle[$idArticle]['article']->getTauxTVA() / 100;
+            $this->totalTTC += $this->totalHT + $this->totalTVA;
+//            $this->totalHT  += (float) $this->listeArticle[$idArticle]->getPrixHT() * (int) $this->listeArticle[$idArticle]->getQteCmd();
+//            $this->totalTVA += $this->totalHT * (float) $this->listeArticle[$idArticle]->getTauxTVA()/100;
         }else{
             foreach($this->listeArticle as $valeur){
-                $this->totalHT   += (float) $valeur->getTotalHT();
-                $this->totalTVA  += (float) $valeur->getTotalHT() * (float) $valeur->getTauxTVA()/100;
+                $this->totalHT   += (float) $valeur['totalHT'];
+                $this->totalTVA  += (float) $valeur['totalHT'] * (float) $valeur['article']->getTauxTVA()/100;
             }
             $this->totalTTC  = (float) $this->totalHT + (float) $this->totalTVA;
         }

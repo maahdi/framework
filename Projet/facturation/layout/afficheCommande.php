@@ -99,18 +99,18 @@ if (isset($commande) && (!$commande->getValidationCommande())){
 <?php 
 if (isset($articles)){
     $sommeTotalHT = 0;
-    $totalTVA = 0;
+    $totalTVA     = 0;
     foreach ($articles as $valeur){
-        $sousTotal = $valeur->getPrixHT()*$valeur->getQteCmd();
-        $sommeTotalHT += $sousTotal;
-        $totalTVA += $valeur->getTauxTVA()*$sousTotal/100;
-        echo '<tr><td><a href="'._LIENDIR_.'supprimerOneArticle&idArticle='.$valeur->getIdArticle().'&idCmd='.$commande->getIdCmd().'">Supprimer</a></td>';
-        echo '<td>'.$valeur->getIdArticle().'</td>';
-        echo '<td>'.$valeur->getDesignation();
-        echo '<td>'.$valeur->getPrixHT().'</td>';
-        echo '<td>'.$valeur->getQteCmd().'</td>';
-        echo '<td>'.$valeur->getTauxTVA().'</td>';
-        echo '<td>'.$sousTotal.'</td></tr>';
+        //$sousTotal    =  $valeur['totalHT'] * $valeur['qte'];
+        $sommeTotalHT += $valeur['totalHT'];
+        $totalTVA     += $valeur['article']->getTauxTVA() * $valeur['totalHT'] / 100;
+        echo '<tr><td><a href="'._LIENDIR_.'supprimerOneArticle&idArticle='.$valeur['article']->getIdArticle().'&idCmd='.$commande->getIdCmd().'">Supprimer</a></td>';
+        echo '<td>'.$valeur['article']->getIdArticle().'</td>';
+        echo '<td>'.$valeur['article']->getDesignation();
+        echo '<td>'.$valeur['article']->getPrixHT().'</td>';
+        echo '<td>'.$valeur['qte'].'</td>';
+        echo '<td>'.$valeur['article']->getTauxTVA().'</td>';
+        echo '<td>'.$valeur['totalHT'].'</td></tr>';
     }
 
 ?>

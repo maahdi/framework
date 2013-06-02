@@ -23,6 +23,8 @@ if ($this->getData('listeArticles') != false){
         echo "<img src='".$image."' border='0'></a></th>";
     echo "<th class='enteteListe'>Stock <a href='"._LIENDIR_.$action."stock' >";
         echo "<img src='".$image."' border='0'></a></th>";
+    echo "<th class='enteteListe'>Stock Theo. <a href='"._LIENDIR_.$action."stockTheorique' >";
+        echo "<img src='".$image."' border='0'></a></th>";
     echo "<th class='enteteListe'>Fournisseur <a href='"._LIENDIR_.$action."nomFournisseur' >";
         echo "<img src='".$image."' border='0'></a></th>";
 ?>
@@ -47,6 +49,8 @@ if ($this->getData('listeArticles')){
             <img src='../images/plus.gif' border='0'></a>
             <a href='"._LIENDIR_."suppressionStockArticle&idArticle=".$valeur->getIdArticle()."'>
             <img src='../images/moins.gif' border='0'></a></ul></td>";
+        echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'stockTheorique', 'float',".$i.",'articles')\">".$valeur->getStockTheorique()."</td>";
+
         echo "<td class='texte'>".$valeur->getNomFournisseur()."</td>";
         echo "<td class='enteteListefin'><a href='"._LIENDIR_."afficheListeArticle&idArticle=".$key."'>modifier</a></td>";
         echo "<td class='enteteListefin'><a href='"._LIENDIR_."deleteArticle&idArticle=".$key.

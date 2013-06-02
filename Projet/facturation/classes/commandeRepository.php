@@ -106,6 +106,7 @@ class CommandeRepository extends Repository{
     // Enregistre une commande deja créer
     // $idArticle null -> lors de la suppression on enregistre la commande
     // après la suppression de l'enregistrement dans produitcmd
+    // $opeStock = + ou - (ajout ou suppression d'article dans la commande)
     //
     public function updateOne(Commande $commande, $idArticle = null){
         $requete = new Requete('update commandes');
@@ -125,17 +126,19 @@ class CommandeRepository extends Repository{
         //Si l'article est un nouveau on insert sinon on update la quantite et le totalht
         //
         foreach ($commande->getListeArticle() as $valeur){
-            if ($valeur->getIdArticle() != $idArticle ){
+            $requete->liste(array('update articles'));
+            $requete->liste(array('set stockTheorique = ?'));
+            $requete->where('idArticle','?');
+            $requete->queryPrepare(array($commande->getStockTheorique($valeur['article']->getIdArticle()),$valeur['article']->getIdArticle()));
+            if ($valeur['article']->getIdArticle() != $idArticle ){
                 $requete->liste(array('update produitcmd'));
                 $requete->liste(array('set qteCmd = ?',
                                       'totalHT = ?'));
                 $requete->where('idArticle', '?',null);
-                echo $requete->toString().'pppppppp';
                 $requete->where('idCmd', '?','and');
-                echo $requete->toString().'lllllllll';
-                $requete->queryPrepare(array($valeur->getQteCmd(),
-                                             $valeur->getTotalHT(),
-                                             $valeur->getIdArticle(),
+                $requete->queryPrepare(array($valeur['qte'],
+                                             $valeur['totalHT'],
+                                             $valeur['article']->getIdArticle(),
                                              $commande->getIdCmd()));
             }else{
                 //
@@ -147,8 +150,6 @@ class CommandeRepository extends Repository{
                     $requete->liste(array('from produitcmd'));
                     $requete->where('idArticle','?');
                     $requete->where('idCmd','?');
-                    echo $idArticle;
-                    echo $commande->getIdCmd();
                     if ($requete->queryPrepare(array($idArticle,$commande->getIdCmd())) == false){ 
                         $requete->liste(array('insert into produitcmd'));
                         $requete->liste(array('qteCmd',
@@ -159,6 +160,16 @@ class CommandeRepository extends Repository{
                         $requete->queryPrepare(array($commande->getQteCmd($idArticle),
                                                      $commande->getTotalHTArticle($idArticle),
                                                      $idArticle,
+                                                     $commande->getIdCmd()));
+                    }else{
+                        $requete->liste(array('update produitcmd'));
+                        $requete->liste(array('set qteCmd = ?',
+                                              'totalHT = ?'));
+                        $requete->where('idArticle', '?',null);
+                        $requete->where('idCmd', '?','and');
+                        $requete->queryPrepare(array($valeur['qte'],
+                                                     $valeur['totalHT'],
+                                                     $valeur['article']->getIdArticle(),
                                                      $commande->getIdCmd()));
                     }
                 }
@@ -180,13 +191,18 @@ class CommandeRepository extends Repository{
                                      $commande->getTotalTVA(),
                                      $commande->getTotalTTC()));
         foreach ($commande->getListeArticle() as $valeur){
+            $requete->liste(array('articles'), 'update');
+            $requete->liste(array('set stockTheorique = ?'));
+            $requete->where('idArticle','?');
+            $requete->queryPrepare(array($valeur['article']->getStockTheorique(),
+                                         $valeur['article']->getIdArticle()));
             $requete->liste(array('produitcmd'),'insert into');
             $requete->liste(array('idCmd','idArticle', 'qteCmd','totalHT'),'(',')');
             $requete->liste(array('?,?,?,?'), 'values(',')');
             $requete->queryPrepare(array($commande->getIdCmd(),
-                                         $valeur->getIdArticle(),
-                                         $valeur->getQteCmd(),
-                                         $valeur->getTotalHT()));
+                                         $valeur['article']->getIdArticle(),
+                                         $valeur['qte'],
+                                         $valeur['totalHT']));
         }
         unset($requete);
     }
