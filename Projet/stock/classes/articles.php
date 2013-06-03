@@ -9,32 +9,37 @@ class Article{
     private $prixTTC;
     private $stock;
     private $fournisseur;//Objet fournisseur fournis par la fabrique
-    private $qteCmd;//Utile lors de la création d'un objet commande
-    private $totalHT = null;
+    private $stockTheorique;
 
     public function __construct($idArticle, $refArticle, $designation, $prixHT,
-        $txTVA, $stock, $fournisseur, $qte = null){
-            $this->idArticle = $idArticle;
-            $this->designation = $designation;
-            $this->refArticle = $refArticle;
-            $this->prixHT = $prixHT;
-            $this->txTVA = $txTVA;
-            $this->prixTTC = round($this->prixHT * (1 + ($this->txTVA / 100)),3);
-            $this->stock = $stock;
-            $this->fournisseur = $fournisseur;
-            $this->qteCmd = $qte;
+        $txTVA, $stock, $stockTheo, $fournisseur, $qte = null){
+            $this->idArticle      = $idArticle;
+            $this->designation    = $designation;
+            $this->refArticle     = $refArticle;
+            $this->prixHT         = (float) $prixHT;
+            $this->txTVA          = (float) $txTVA;
+            $this->prixTTC        = round($this->prixHT * (1 + ($this->txTVA / 100)),3);
+            $this->stock          = (int) $stock;
+            $this->stockTheorique = (int) $stockTheo;
+            $this->fournisseur    = $fournisseur;
     }
 
-    public function setQuantiteCmd($qte){
-        $this->qteCmd = $qte;
-        $this->totalHT = $qte * $this->prixHT;
+    public function getStockTheorique(){
+        return $this->stockTheorique;
     }
 
-    public function getTotalHT(){
-        return $this->totalHT;
-    }
-    public function getQteCmd(){
-        return $this->qteCmd;
+    public function setStockTheorique($valeur, $operateur){
+        //
+        // Possibilite de mettre des restrictions pour que le stock ne passe pas en négatif
+        //
+        switch($operateur){
+        case '+':
+            $this->stockTheorique = $this->stock + $valeur;
+            break;
+        case '-':
+            $this->stockTheorique = $this->stock - $valeur;
+            break;
+        }
     }
 
     public function getIdArticle(){
@@ -70,7 +75,7 @@ class Article{
     }
 
     public function setStock($newStock){
-        $this->stock = $newStock;
+        $this->stock = (int) $newStock;
     }
 
     public function setDesignation($newDes){

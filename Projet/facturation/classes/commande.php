@@ -6,9 +6,14 @@ class Commande{
     private $listeArticle = array();
     private $totalHT = 0;
     private $totalTTC = 0;
-    private $tva = 0;
+    private $totalTVA = 0;
     private $valid = false;
     private $remise;
+    private $acompte = 0;
+    private $nbPaiement = 1;
+    private $sommePaid = 0;
+    private $versement = 0;
+    
     
     public function __construct($idCmd) {
         $this->idCmd = $idCmd;
@@ -23,7 +28,7 @@ class Commande{
         $nb = count($this->listeArticle);
         foreach($this->listeArticle as $valeur){
             if ($i < $nb){
-                $rslt .= $valeur->getDesignation();
+                $rslt .= $valeur['article']->getDesignation();
                 if ($i != ($nb-1)){
                     $rslt .= ', ';
                 }else{
@@ -35,6 +40,36 @@ class Commande{
         return $rslt;
     }
     
+    public function setAcompte($valeur){
+        $this->acompte = $valeur;
+        $this->setSommePaid($valeur);
+    }
+
+    public function setSommePaid($valeur){
+        $this->sommePaid = $valeur;
+    }
+
+    public function getSommePaid(){
+        return $this->sommePaid;
+    }
+
+    public function getVersement(){
+        return $this->versement;
+    }
+
+    public function setNbPaiement($valeur){
+        $this->nbPaiement = (int) $valeur;
+        $this->versement  = (float) ($this->totalTTC - $this->acompte) / $valeur;
+    }
+
+    public function getNbPaiement(){
+        return $this->nbPaiement;
+    }
+
+    public function getAcompte(){
+        return $this->acompte;
+    }
+
     public function isClient(){
         if ($this->client != null){
             return true;
@@ -43,15 +78,23 @@ class Commande{
         }
     }
 
+    public function getStockTheorique($idArticle){
+        return $this->listeArticle[$idArticle]['article']->getStockTheorique();
+    }
+
     public function getTotalHTArticle($id){
-        return $this->listeArticle[$id]->getTotalHT();
+        return $this->listeArticle[$id]['totalHT'];
+//        return $this->listeArticle[$id]->getTotalHT();
     }
 
     public function setClient($client){
         $this->client = $client;
     }
+
     public function setOneArticle($article){
-        $this->listeArticle[$article->getIdArticle()] = $article;
+        $this->listeArticle[$article->getIdArticle()] = array( 'article'  => $article,
+                                                               'qte'      => 'vide',
+                                                               'totalHT'  => 'vide');
     }
 
     public function setDateCmd($date){
@@ -66,12 +109,15 @@ class Commande{
         return $this->remise;
     }
 
-    public function getTva(){
-        return $this->tva;
+    public function getTotalTVA(){
+        return $this->totalTVA;
     }
 
     public function setQteCmd($idArticle, $qte){
-        $this->listeArticle[$idArticle]->setQuantiteCmd($qte);
+        $this->listeArticle[$idArticle]['totalHT'] = $this->listeArticle[$idArticle]['article']->getPrixHT() * (int) $qte;
+        $this->listeArticle[$idArticle]['qte'] = (int) $qte;
+        $this->listeArticle[$idArticle]['article']->setStockTheorique((int) $qte, '-');
+        //$this->listeArticle[$idArticle]->setQuantiteCmd($qte);
     }
     
     public function getIdCmd(){
@@ -110,7 +156,8 @@ class Commande{
     }
 
     public function getQteCmd($idArticle){
-        return $this->listeArticle[$idArticle]->getQteCmd();
+        return $this->listeArticle[$idArticle]['qte'];
+        //return $this->listeArticle[$idArticle]->getQteCmd();
     }
 
     public function setValidation(){
@@ -133,24 +180,24 @@ class Commande{
     //   totalHT
     //   tva
     //   totalTTC
+    //  AVANT d'utiliser l'objet commande
     //
     public function setTotaux($idArticle = null){
+        $this->totalHT  = 0;
+        $this->totalTVA = 0;
+        $this->totalTTC = 0;
         if ($idArticle != null){
-            $this->totalHT  += $this->listeArticle[$idArticle]->getPrixHT()*$this->listeArticle[$idArticle]->getQteCmd();
-            $this->tva      = $this->totalHT * $this->listeArticle[$idArticle]->getTauxTVA()/100;
-            $this->totalTTC = $this->totalHT + $this->tva;
+            $this->totalHT  += (float) $this->listeArticle[$idArticle]['article']->getPrixHT() * (int) $this->listeArticle[$idArticle]['qte'];
+            $this->totalTVA += $this->totalHT * (float) $this->listeArticle[$idArticle]['article']->getTauxTVA() / 100;
+            $this->totalTTC += $this->totalHT + $this->totalTVA;
+//            $this->totalHT  += (float) $this->listeArticle[$idArticle]->getPrixHT() * (int) $this->listeArticle[$idArticle]->getQteCmd();
+//            $this->totalTVA += $this->totalHT * (float) $this->listeArticle[$idArticle]->getTauxTVA()/100;
         }else{
-            $totalTVA = 0;
-            $totalHT  = 0;
-            $totalTTC = 0;
             foreach($this->listeArticle as $valeur){
-                $totalHT  += $valeur->getPrixHT()*$valeur->getQteCmd();
-                $totalTVA += $totalHT * $valeur->getTauxTVA()/100;
-                $totalTTC += $totalHT + $totalTVA;
+                $this->totalHT   += (float) $valeur['totalHT'];
+                $this->totalTVA  += (float) $valeur['totalHT'] * (float) $valeur['article']->getTauxTVA()/100;
             }
-            $this->totalHT  = $totalHT;
-            $this->totalTVA = $totalTVA;
-            $this->totalTTC = $totalTTC;
+            $this->totalTTC  = (float) $this->totalHT + (float) $this->totalTVA;
         }
     }
 }

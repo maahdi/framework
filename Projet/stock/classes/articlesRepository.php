@@ -10,7 +10,7 @@ class ArticlesRepository extends Repository{
             foreach ($resultat as $valeur){
             $liste[$valeur->idArticle] = new Article($valeur->idArticle, $valeur->refArticle,
                     $valeur->designation, round($valeur->prixHT,3), $valeur->txTVA,
-                    $valeur->stock, $fournisseurs[$valeur->idFournisseur]);
+                    $valeur->stock, $valeur->stockTheorique, $fournisseurs[$valeur->idFournisseur]);
             }
             return $liste;
         }
@@ -21,7 +21,7 @@ class ArticlesRepository extends Repository{
         foreach($resultat as $valeur){
             $article = new Article($valeur->idArticle, $valeur->refArticle, $valeur->designation,
                                     round($valeur->prixHT,3), $valeur->txTVA, $valeur->stock,
-                                    $fournisseur[$valeur->idFournisseur]);
+                                    $valeur->stockTheorique, $fournisseur[$valeur->idFournisseur]);
         }
         return $article;
     }

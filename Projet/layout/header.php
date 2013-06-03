@@ -6,7 +6,7 @@
         <link rel="stylesheet" href="/workspace/framework/Projet/layout/style.css" type="text/css" media="screen">
         <?php echo ($this->getAjax()) ? '<script type="text/javascript" src="../utils/inlineMod.js"></script>' : '';?>
          <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>-->
-         <script type="text/javascript" src="../utils/jquery-1.9.1.js"></script>
+         <script type="text/javascript" src="/workspace/framework/utils/jquery-1.9.1.js"></script>
          <script type="text/javascript">
          $(document).ready(function(){
              $('body').prepend('<div class="top_link"><a href="#top"  title="Revenir en haut de page"><img src="../images/flecheretour.png"></a></div>');

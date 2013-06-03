@@ -5,6 +5,7 @@ include_once _DIR_.'Projet/facturation/modele/facturationClientModele.php';
 class FacturationClientController extends Controller{
     private $url;
     private $modele;
+    private $urlCommande;
 
     public function __construct(){
         parent::__construct();
@@ -53,9 +54,10 @@ class FacturationClientController extends Controller{
     }
 
     public function displayAllCommande(){
+        if (is_file($this->urlCommande)){
+            unlink($this->urlCommande);
+        }
         $data['listeCommande'] = $this->getAllCommande('com');
-        unset($clients);
-        unset($articles);
         $this->setData(array('liste' => true));
         $this->view->render($this->url, $data);
     }
@@ -93,6 +95,8 @@ class FacturationClientController extends Controller{
         $commande->setQteCmd($_GET['idArticle'],$_GET['qte']);
         $commande->setClient($client);
         $commande->setTotaux();
+        $commande->setAcompte($_GET['acompte']);
+        $commande->setNbPaiement($_GET['nbPaiement']);
     }
 
     public function ajouterArticle($suppression = null){
@@ -115,8 +119,7 @@ class FacturationClientController extends Controller{
         }else{
             $commande = $this->getRepository('commande')->getNewCommande($_GET['idCmd']);
             $this->modificationOneCommande($commande);
-            $this->getRepository('commande')->insertOne($_GET['idCmd'],$_GET['idClient'],
-                                                        $_GET['dateCmd'],$_GET['qte'], $_GET['idArticle']);
+            $this->getRepository('commande')->insertOne($commande);
         }
         //
         //Enregistrement pour ajout d'article au prochain passage
@@ -131,36 +134,16 @@ class FacturationClientController extends Controller{
 
     public function supprimerOneArticle(){
         $this->modele->supprimerOneArticleCommande(array ('idArticle','idCmd'),array($_GET['idArticle'],$_GET['idCmd']), 'produitcmd');
-        $commande = $this->getRepository('commande')->getNewCommande($_GET['idCmd']);
-        $this->setCommandeAfterArticleDelete($commande);
+        $liste = $this->getOneCommande($_GET['idCmd'],'com');
+        $commande = $liste[$_GET['idCmd']];
+        $commande->setTotaux();
+        $this->getRepository('commande')->updateOne($commande);
         $this->serializedObjet($this->urlCommande, $commande, 'w');
         $article = $this->getRepository('articles')->getAll($this->getRepository('fournisseurs')->getAll());
         $this->view->setData(array('commandeModif' => $commande,
                                    'articles'      => $article,
                                    'afficherCommande' => true));
         $this->view->render($this->url);
-    }
-
-    public function setCommandeAfterArticleDelete($commande){
-        $rslt = $this->getRepository('commande')->findBy('commandes', 'idCmd',$commande->getIdCmd());
-        foreach ($rslt as $valeur){
-                $idClient = $valeur->idClient;
-                $commande->setDateCmd($valeur->dateCmd);
-        }
-        $fournisseur = $this->getRepository('fournisseurs')->getAll();
-        $article = $this->getRepository('articles')->getAll ($fournisseur);
-        unset($fournisseur);
-        $pays = $this->getRepository('pays')->getAll();
-        $client = $this->getRepository('clients')->getOne($idClient, $pays);
-        unset($pays);
-        $commande->setClient($client);
-        unset($client);
-        $rslt = $this->getRepository('commande')->findBy('produitcmd','idCmd',$commande->getIdCmd());
-        foreach($rslt as $valeur){
-            $commande->setOneArticle($article[$valeur->idArticle]);
-            $commande->setQteCmd($valeur->idArticle, $valeur->qteCmd);
-        }
-        $commande->setTotaux();
     }
 
     public function newCommande(){
@@ -179,35 +162,43 @@ class FacturationClientController extends Controller{
         $this->view->render($this->url, $data); 
     }
 
+    public function deleteCommande(){
+       $this->modele->deleteCommande($_GET['idCmd']); 
+       $this->displayAllCommande();
+    }
+
+    //
     // Retourne array(id => valeur)
+    //
     private function getNewId(){
         $data = array();
         $id = $this->modele->getAllId('idCmd', 'commandes');
         if (($nb = count($id)) == 0){
             $data['newId'] = 5000;
-        }
-        //
-        //Gère le cas ou le premier num est 5001 par ex.
-        //
-        if ($id[0] > 5000){ 
-            $data['newId'] = 5000;
         }else{
-            for ($i = 0 ; $i < $nb-1 ; $i++){
-                //
-                //si le numéro suivant n'est pas logiquement le précédent + 1 
-                //C'est un numéro libre
-                //dans ce cas on sort de la boucle
-                //
-                if ($id[$i+1] != $id[$i]+1 ){ 
-                    $data['newId'] = $id[$i]+1;
-                    $i = $nb-2; 
+            //
+            //Gère le cas ou le premier num est 5001 par ex.
+            //
+            if ($id[0] > 5000){ 
+                $data['newId'] = 5000;
+            }else{
+                for ($i = 0 ; $i < $nb-1 ; $i++){
+                    //
+                    //si le numéro suivant n'est pas logiquement le précédent + 1 
+                    //C'est un numéro libre
+                    //dans ce cas on sort de la boucle
+                    //
+                    if ($id[$i+1] != $id[$i]+1 ){ 
+                        $data['newId'] = $id[$i]+1;
+                        $i = $nb-2; 
+                    }
                 }
-            }
-            //
-            // s'il n'y a pas de num libre on continue en suivant du dernier
-            //
-            if (!isset($data['newId'])){
-                $data['newId'] = $id[$nb-1]+1;
+                //
+                // s'il n'y a pas de num libre on continue en suivant du dernier
+                //
+                if (!isset($data['newId'])){
+                    $data['newId'] = $id[$nb-1]+1;
+                }
             }
         }
         return $data;

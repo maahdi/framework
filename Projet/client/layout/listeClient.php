@@ -42,7 +42,7 @@ if ($this->getData('listeClient') != false){
         //Data['retour'] a mettre a true lors de retour d'enregistrement
         //
         if (!$this->getData('retour')){
-
+            echo '<td><select name=\'idPays\'>';
             foreach ($this->getData('listePays') as $pays){
                 if ($pays->getIdPays() == $valeur->getIdPays()){
                     echo '<option value=\''.$valeur->getIdPays().'\' selected>'.$valeur->getNomPays().'</option>';

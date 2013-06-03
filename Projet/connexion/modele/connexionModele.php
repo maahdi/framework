@@ -20,6 +20,7 @@ class ConnexionModele extends Modele{
         $requete->where('login','?');
         $requete->where('password','?');
         $resultat = $requete->queryPrepare($identifiant);
+        unset($requete);
         if ($resultat->rowCount() == 1){
             $resultat->closeCursor();
             return true;

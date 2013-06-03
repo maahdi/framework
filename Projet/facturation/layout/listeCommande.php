@@ -33,7 +33,7 @@ foreach ($this->getData('listeCommande') as $valeur){
     echo "<td class='texte' >".$valeur->getDateCmd()."</td>";
     echo "<td class='texte' >".$valeur->getNomClient()."</td>";
     echo "<td class='texte' >".round($valeur->getTotalHT(),3)."</td>";
-    echo "<td class='texte' >".round($valeur->getTva(),2)."</td>";
+    echo "<td class='texte' >".round($valeur->getTotalTVA(),2)."</td>";
     echo "<td class='texte' >".round($valeur->getTotalTTC(),3)."</td>";
     echo "<td style='width:25%;' >".$valeur->toStringArticles(5)."</td>";
     if (!$valeur->getValidationCommande()){
@@ -63,11 +63,6 @@ foreach ($this->getData('listeCommande') as $valeur){
             </tr></table>
 
 <?php }else{
-    echo '<div id=\'notfound\'><h2>Pas d\'enregistrement trouvé pour : '.$_REQUEST['search'].'</h2>';
-    if (!$this->getData('newSearch')){
-        echo '<a href=\''._LIENDIR_.'gestionClient\'>Retour</a></div>';       
-    }else{
-        echo '<a href=\''._LIENDIR_.'renderAdvancedSearchClient\'>Retour</a></div>';
-    }
+    echo '<div id=\'notfound\'><h2>Pas d\'enregistrement trouvé pour !!!</h2></div>';
 
 }

@@ -81,9 +81,17 @@ if (isset($commande) && (!$commande->getValidationCommande())){
     echo '<td>Quantité : <input name="qte" type="text"></td>';
 } ?>
 <td><input type="submit" value="Ajouter">
-<input type="hidden" value="<?php echo $idCmd; ?>" name="idCmd">
-<input type="hidden" value="<?php echo $date;?>" name="dateCmd">
-<input type="hidden" value="ajouterArticleComClient" name="action"></td></tr>
+    <input type="hidden" value="<?php echo $idCmd; ?>" name="idCmd">
+    <input type="hidden" value="<?php echo $date;?>" name="dateCmd">
+    <input type="hidden" value="ajouterArticleComClient" name="action">
+    Acompte<input type="text" value="0" name="acompte"> 
+
+<?php if (isset($commande) && (!$commande->getValidationCommande())){
+    echo 'NbPaiement<input type="text" value="'.$commande->getNbPaiement().'" name="nbPaiement">';
+}else{
+    echo 'NbPaiement<input type="text" value="1" name="nbPaiement">';
+}?>
+</td></tr>
 </form>
 <table class="tableau">
     <thead>
@@ -99,18 +107,18 @@ if (isset($commande) && (!$commande->getValidationCommande())){
 <?php 
 if (isset($articles)){
     $sommeTotalHT = 0;
-    $totalTVA = 0;
+    $totalTVA     = 0;
     foreach ($articles as $valeur){
-        $sousTotal = $valeur->getPrixHT()*$valeur->getQteCmd();
-        $sommeTotalHT += $sousTotal;
-        $totalTVA += $valeur->getTauxTVA()*$sousTotal/100;
-        echo '<tr><td><a href="'._LIENDIR_.'supprimerOneArticle&idArticle='.$valeur->getIdArticle().'&idCmd='.$commande->getIdCmd().'">Supprimer</a></td>';
-        echo '<td>'.$valeur->getIdArticle().'</td>';
-        echo '<td>'.$valeur->getDesignation();
-        echo '<td>'.$valeur->getPrixHT().'</td>';
-        echo '<td>'.$valeur->getQteCmd().'</td>';
-        echo '<td>'.$valeur->getTauxTVA().'</td>';
-        echo '<td>'.$sousTotal.'</td></tr>';
+        //$sousTotal    =  $valeur['totalHT'] * $valeur['qte'];
+        $sommeTotalHT += $valeur['totalHT'];
+        $totalTVA     += $valeur['article']->getTauxTVA() * $valeur['totalHT'] / 100;
+        echo '<tr><td><a href="'._LIENDIR_.'supprimerOneArticle&idArticle='.$valeur['article']->getIdArticle().'&idCmd='.$commande->getIdCmd().'">Supprimer</a></td>';
+        echo '<td>'.$valeur['article']->getIdArticle().'</td>';
+        echo '<td>'.$valeur['article']->getDesignation();
+        echo '<td>'.$valeur['article']->getPrixHT().'</td>';
+        echo '<td>'.$valeur['qte'].'</td>';
+        echo '<td>'.$valeur['article']->getTauxTVA().'</td>';
+        echo '<td>'.$valeur['totalHT'].'</td></tr>';
     }
 
 ?>
@@ -137,7 +145,9 @@ if (isset($articles)){
 //
 if (isset($commande) && (!$commande->getValidationCommande())){?>
 <form action="<?php echo _LIENDIR_.'facturerCommande';?>">
-<input type="submit" value="Facturer" onclick="if(!confirm('Voulez-vous vraiment supprimer la commande <?php echo $idCmd;?> de l\'utilisateur <?php echo $commande->getNomClient();?> ?')) return false;"></form>
+    <input type="submit" value="Facturer" onclick="if(!confirm('Voulez-vous vraiment supprimer la commande <?php echo $idCmd;?> de l\'utilisateur <?php echo $commande->getNomClient();?> ?')) return false;">    
+</form>
+<a href="<?php echo _LIENDIR_.'commandeClient';?>">Retour liste des commandes</a>
 <?php } ?>
 
 
