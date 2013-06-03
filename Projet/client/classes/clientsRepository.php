@@ -42,7 +42,6 @@ class ClientsRepository extends Repository{
                     $valeur->adresseClient, 
                     $valeur->cpClient, 
                     $pays[$valeur->idPays]);
-                    echo $valeur->idPays;
             }
             return $liste;
         }else{

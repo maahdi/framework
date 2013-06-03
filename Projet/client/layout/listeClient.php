@@ -38,8 +38,11 @@ if ($this->getData('listeClient') != false){
 
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'adresseClient', 'texte',".$i.",'clients')\">".$valeur->getAdresseClient()."</td>";
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'cpClient', 'texte',".$i.",'clients')\">".$valeur->getCpClient()."</td>";
+        //
+        //Data['retour'] a mettre a true lors de retour d'enregistrement
+        //
         if (!$this->getData('retour')){
-            echo "<td id='pays' class='texte'><select id='selPays' onchange=\"inlineModSelect(".$id.", this, 'idPays', 'entier',".$i.",'clients')\" name='idPays'>";
+
             foreach ($this->getData('listePays') as $pays){
                 if ($pays->getIdPays() == $valeur->getIdPays()){
                     echo '<option value=\''.$valeur->getIdPays().'\' selected>'.$valeur->getNomPays().'</option>';
