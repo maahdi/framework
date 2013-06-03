@@ -81,9 +81,12 @@ if (isset($commande) && (!$commande->getValidationCommande())){
     echo '<td>Quantité : <input name="qte" type="text"></td>';
 } ?>
 <td><input type="submit" value="Ajouter">
-<input type="hidden" value="<?php echo $idCmd; ?>" name="idCmd">
-<input type="hidden" value="<?php echo $date;?>" name="dateCmd">
-<input type="hidden" value="ajouterArticleComClient" name="action"></td></tr>
+    <input type="hidden" value="<?php echo $idCmd; ?>" name="idCmd">
+    <input type="hidden" value="<?php echo $date;?>" name="dateCmd">
+    <input type="hidden" value="ajouterArticleComClient" name="action">
+    Acompte<input type="text" value="0" name="accompte"> 
+    NbPaiement<input type="text" value="1" name="nbPaiement">
+</td></tr>
 </form>
 <table class="tableau">
     <thead>

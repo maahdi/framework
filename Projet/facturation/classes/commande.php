@@ -9,6 +9,11 @@ class Commande{
     private $totalTVA = 0;
     private $valid = false;
     private $remise;
+    private $acompte = 0;
+    private $nbPaiement = 1;
+    private $sommePaid = 0;
+    private $versement = 0;
+    
     
     public function __construct($idCmd) {
         $this->idCmd = $idCmd;
@@ -35,6 +40,36 @@ class Commande{
         return $rslt;
     }
     
+    public function setAcompte($valeur){
+        $this->acompte = $valeur;
+        $this->setSommePaid($valeur);
+    }
+
+    public function setSommePaid($valeur){
+        $this->sommePaid = $valeur;
+    }
+
+    public function getSommePaid(){
+        return $this->sommePaid;
+    }
+
+    public function getVersement(){
+        return $this->versement;
+    }
+
+    public function setNbPaiement($valeur){
+        $this->nbPaiement = $valeur;
+        $this->versement  = ($this->totalTTC - $this->acompte) / $valeur;
+    }
+
+    public function getNbPaiement(){
+        return $this->nbPaiement;
+    }
+
+    public function getAcompte(){
+        return $this->acompte;
+    }
+
     public function isClient(){
         if ($this->client != null){
             return true;

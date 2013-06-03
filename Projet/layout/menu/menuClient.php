@@ -9,10 +9,11 @@
     echo '<input type="text" placeholder="Rechercher" name="search" id="keyword">';
     echo '<input type="submit" id="ok" value="OK">';
     echo '</form></li>';
-    echo "<li><a href='"._LIENDIR_."renderAdvancedSearchClient'>Recherche avancée</a></li>";
+    echo '<li><a href=\''._LIENDIR_.'renderAdvancedSearchClient\'>Recherche avancée</a></li>';
 }else{
-    echo "<li><a href='"._LIENDIR_."renderAdvancedSearchClient'>Nouvelle Recherche</a></li>";
+    echo '<li><a href=\''._LIENDIR_.'renderAdvancedSearchClient\'>Nouvelle Recherche</a></li>';
 }
+    echo '<li><a href=\''._LIENDIR_.'suiviClient\'>Suivi client</a></li>';
 
 
 ?>
