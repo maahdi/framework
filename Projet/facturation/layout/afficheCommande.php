@@ -85,7 +85,12 @@ if (isset($commande) && (!$commande->getValidationCommande())){
     <input type="hidden" value="<?php echo $date;?>" name="dateCmd">
     <input type="hidden" value="ajouterArticleComClient" name="action">
     Acompte<input type="text" value="0" name="accompte"> 
-    NbPaiement<input type="text" value="1" name="nbPaiement">
+
+<?php if (isset($commande) && (!$commande->getValidationCommande())){
+    echo 'NbPaiement<input type="text" value="'.$commande->getNbPaiement().'" name="nbPaiement">';
+}else{
+    echo 'NbPaiement<input type="text" value="1" name="nbPaiement">';
+}?>
 </td></tr>
 </form>
 <table class="tableau">

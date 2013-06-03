@@ -52,6 +52,8 @@ class CommandeRepository extends Repository{
                 $unValid [$valeur->idCmd] = $valeur->idCmd;
             }
             $liste[$valeur->idCmd]->setTotaux();
+            $liste[$valeur->idCmd]->setAcompte($valeur->acompte);
+            $liste[$valeur->idCmd]->setNbPaiement($valeur->nbPaiement);
         }
         return $this->checkValid($liste, $unValid, $factOrCom);
     }
@@ -65,7 +67,10 @@ class CommandeRepository extends Repository{
         $listeChamp = array ('idCmd',
                              'idClient',
                              'dateCmd',
-                             'valid');
+                             'valid',
+                             'acompte',
+                             'nbPaiement',
+                             'sommePayed');
         $requete->liste($listeChamp);
         $requete->liste(array('commandes'), 'from');
         $requete->where('idCmd','?');
@@ -80,6 +85,8 @@ class CommandeRepository extends Repository{
             $commande = new Commande($valeur->idCmd);
             $commande->setClient($client[$valeur->idClient]);
             $commande->setDateCmd($valeur->dateCmd);
+            $commande->setAcompte($valeur->acompte);
+            $nb = $valeur->nbPaiement;
             if ($valeur->valid == 1){
                 $commande->setValidation();
             }else{
@@ -95,6 +102,7 @@ class CommandeRepository extends Repository{
             $commande->setQteCmd($valeur->idArticle, $valeur->qteCmd);
         }
         $commande->setTotaux();
+        $commande->setNbPaiement($nb);
         //
         //Retour comme sa car checkValid renvoi un tableau associatif
         //
@@ -114,13 +122,19 @@ class CommandeRepository extends Repository{
                                      'totalHT = ?',
                                      'totalTVA = ?',
                                      'totalTTC = ?',
-                                     'valid = ?'));
+                                     'valid = ?',
+                                     'acompte = ?',
+                                     'nbPaiement = ?',
+                                     'sommePayed = ?'));
         $requete->liste(array(' where idCmd = ?'));
         $requete->queryPrepare(array($commande->getIdClient(),
                                      $commande->getTotalHT(),
                                      $commande->getTotalTVA(),
                                      $commande->getTotalTTC(),
                                      $commande->getValidationCommande(),
+                                     $commande->getAcompte(),
+                                     $commande->getNbPaiement(),
+                                     $commande->getSommePaid(),
                                      $commande->getIdCmd()));
         //
         //Si l'article est un nouveau on insert sinon on update la quantite et le totalht
@@ -182,14 +196,17 @@ class CommandeRepository extends Repository{
     public function insertOne($commande){
         $requete = new Requete('insert into');
         $requete->liste(array('commandes'));
-        $requete->liste(array('idCmd','idClient', 'dateCmd','totalHT', 'totalTVA', 'totalTTC'),'(',')');
-        $requete->liste(array('?,?,?,?,?,?'),'values(',')');
+        $requete->liste(array('idCmd','idClient', 'dateCmd','totalHT', 'totalTVA', 'totalTTC', 'acompte', 'nbPaiement', 'sommePayed'),'(',')');
+        $requete->liste(array('?,?,?,?,?,?,?,?'),'values(',')');
         $requete->queryPrepare(array($commande->getIdCmd(), 
                                      $commande->getIdClient(),
                                      $commande->getDateCmd(),
                                      $commande->getTotalHT(),
                                      $commande->getTotalTVA(),
-                                     $commande->getTotalTTC()));
+                                     $commande->getTotalTTC(),
+                                     $commande->getAcompte(),
+                                     $commande->getNbPaiement(),
+                                     $commande->getSommePaid()));
         foreach ($commande->getListeArticle() as $valeur){
             $requete->liste(array('articles'), 'update');
             $requete->liste(array('set stockTheorique = ?'));

@@ -58,8 +58,8 @@ class Commande{
     }
 
     public function setNbPaiement($valeur){
-        $this->nbPaiement = $valeur;
-        $this->versement  = ($this->totalTTC - $this->acompte) / $valeur;
+        $this->nbPaiement = (int) $valeur;
+        $this->versement  = (float) ($this->totalTTC - $this->acompte) / $valeur;
     }
 
     public function getNbPaiement(){
