@@ -94,6 +94,8 @@ class FacturationClientController extends Controller{
         $commande->setQteCmd($_GET['idArticle'],$_GET['qte']);
         $commande->setClient($client);
         $commande->setTotaux();
+        $commande->setAcompte($_GET['acompte']);
+        $commande->setNbPaiement($_GET['nbPaiement']);
     }
 
     public function ajouterArticle($suppression = null){
