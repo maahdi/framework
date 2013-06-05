@@ -6,7 +6,7 @@ class Requete{
     private $where = true;
     private $requete='';
     private $pdostatement=true;
-    
+
     //On peut appeler Requete en spécifiant une commande SQL ou non
     //Met l'objet PDOStatement en mode objet;
     public function __construct($commande = null) {
@@ -24,7 +24,7 @@ class Requete{
         $this->pdostatement = false;
         $this->where = true;
     }
-    
+
     public function from(array $liste){
         $this->requete .= ' from '.$this->addVirgule($liste);
     }
@@ -40,7 +40,7 @@ class Requete{
             }
             $i++;
         }
-        
+
         $this->pdostatement->execute($valeur);
         if ($this->pdostatement->rowCount() == 0){
             $this->resetRequete();
@@ -65,15 +65,15 @@ class Requete{
             return $retour;
         }
     }
-    
+
     public function setAscOrder(){
         $this->requete .= 'ASC';
     }
-    
+
     public function setDescOrder(){
         $this->requete .= 'DESC';
     }
-    
+
     public function liste(array $liste, $entete = null, $pied = null){
         if (isset($entete)){
             $this->requete .= $entete.' '.$this->addVirgule($liste);
@@ -86,7 +86,7 @@ class Requete{
     }
 
     public function toString(){
-            return $this->requete;
+        return $this->requete;
     }
     //
     // $choix : null pour le premier après on choisi AND ou OR 
@@ -108,25 +108,29 @@ class Requete{
         }
         $this->requete .= $where.' ';
     }
-    
+
     private function setFetchModObj(){
-            $this->pdostatement->setFetchMode(PDO::FETCH_OBJ);
+        $this->pdostatement->setFetchMode(PDO::FETCH_OBJ);
     }
-    
+
+    private function setFetchModAssoc(){
+        $this->pdostatement->setFetchMode(PDO::FETCH_ASSOC);
+    }
+
     private function addEgal($champ, $Valeur, $req){
         $req .= $champ.'='.$Valeur;
         return $req;
     }
-    
+
     private function addVirgule($liste){
         $req = "";
         $nb = count($liste);
         for ($i = 0 ; $i< $nb; $i++){
-                $req .= "$liste[$i] ";
-                if ($i != $nb-1){
-                    $req .= ', ';
-                }
+            $req .= "$liste[$i] ";
+            if ($i != $nb-1){
+                $req .= ', ';
             }
-            return $req;
+        }
+        return $req;
     }
 }
