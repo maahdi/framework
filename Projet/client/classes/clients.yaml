@@ -1,0 +1,9 @@
+nom : "clients"
+champs :
+  -
+    title : "idClient"
+    type : "string"
+    primary : true
+  -
+    title : "nomClient"
+    type : "string"
