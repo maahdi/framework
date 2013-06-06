@@ -13,9 +13,20 @@ class RepositoryFinder{
         $this->repo['commande']    = _DIR_.'Projet/facturation/classes/commandeRepository.php';
     }
     
-    public function getRepo($name){
+    public function &getRepo($name){
         include_once $this->repo[$name];
         $repoName = ucfirst($name).'Repository';
-        return new $repoName();
+        $repo = new $repoName();
+        $repo->setTable($name);
+        $repo->getRepositoryFinder($this);
+        return $repo;
+    }
+
+    public function &getAnotherRepo($name){
+        include_once $this->repo[$name];
+        $repoName = ucfirst($name).'Repository';
+        $repo = new $repoName();
+        $repo->setTable($name);
+        return $repo;
     }
 }

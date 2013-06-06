@@ -126,7 +126,7 @@ class Requete{
         $req = "";
         $nb = count($liste);
         for ($i = 0 ; $i< $nb; $i++){
-            $req .= "$liste[$i] ";
+            $req .= $liste[$i].' ' ;
             if ($i != $nb-1){
                 $req .= ', ';
             }

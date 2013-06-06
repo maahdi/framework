@@ -1,9 +1,14 @@
 nom : "clients"
 champs :
   -
-    title : "idClient"
-    type : "string"
+    title   : "idClient"
+    type    : "string"
     primary : true
   -
     title : "nomClient"
-    type : "string"
+    type  : "string"
+  -
+    title    : "pays"
+    type     : "array"
+    relation : true
+    joinOne  : "idPays"

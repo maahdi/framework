@@ -11,4 +11,9 @@ class FacturationController extends Controller{
         $this->view->setSubMenu('menuAccueil');
         $this->view->render(_DIR_.'Projet/facturation/layout/pageFacturation.php');
     }
+
+    public function getClient(){
+        $listeClient = &$this->getRepository('clients')->getAll();
+//        var_dump($listeClient);
+    }
 }

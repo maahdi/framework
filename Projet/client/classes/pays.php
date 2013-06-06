@@ -4,9 +4,9 @@ class Pays{
     private $idPays;
     private $nomPays;
 
-    public function __construct($id, $nom){
-        $this->idPays = $id;
-        $this->nomPays = $nom;
+    public function __construct($pays){
+        $this->idPays = $pays['idPays'];
+        $this->nomPays = $pays['nomPays'];
     }
 
     public function setNomPays($nom){

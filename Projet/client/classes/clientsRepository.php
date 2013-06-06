@@ -4,11 +4,14 @@ include_once _DIR_.'Projet/client/classes/clients.php';
 
 class ClientsRepository extends Repository{
 
-    //ClientsRepository a besoin de l'objet Pays pour satisfaire la relation SQL
-    public function getAll($pays){
-        $resultat = $this->findAll('clients','idClient');
-        return $this->constructClients($resultat, $pays);
+    public function getAll(){
+        return parent::getAll();
     }
+    //ClientsRepository a besoin de l'objet Pays pour satisfaire la relation SQL
+    //public function getAll($pays){
+    //    $resultat = $this->findAll('clients','idClient');
+    //    return $this->constructClients($resultat, $pays);
+    //}
 
     // $valeur = array('champ' , valeur)
     public function modifierClient($valeur, $id, $pays){

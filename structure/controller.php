@@ -73,6 +73,7 @@ class Controller{
             $this->view->setData(array('messageErreur' => $erreur->getMessage()));
             break;
         }
+    
         $this->view->renderErrorAction();
     }
 

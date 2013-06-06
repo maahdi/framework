@@ -9,14 +9,14 @@ class Clients{
     private $cpClient;
     private $pays;
 
-    public function __construct($id, $nom, $prenom, $courriel, $adresse, $cp, $pays){
-        $this->idClient      = $id;
-        $this->nomClient     = $nom;
-        $this->prenomClient  = $prenom;
-        $this->courriel      = $courriel;
-        $this->adresseClient = $adresse;
-        $this->cpClient      = $cp;
-        $this->pays          = $pays;
+    public function __construct($client){
+        $this->idClient      = $client['idClient'];
+        $this->nomClient     = $client['nomClient'];
+        //$this->prenomClient  = $prenom;
+        //$this->courriel      = $courriel;
+        //$this->adresseClient = $adresse;
+        //$this->cpClient      = $cp;
+        //$this->pays          = $pays;
     }
 
     public function getIdClient(){

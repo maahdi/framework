@@ -1,0 +1,10 @@
+nom : "pays"
+champs :
+  -
+    title   : "idPays"
+    type    : "int"
+    primary : true
+  -
+    title : "nomPays"
+    type  : "string"
+

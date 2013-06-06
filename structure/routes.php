@@ -4,9 +4,11 @@ $routes = array();
 //Affecter ensuite nom fonction appelée et le bundle séparé par un "/"
 //'$routes['action'] = nomDeLaFonction/bundle'
 $routes['login']                        = 'login/connexion';
+
 $routes['deconnex']                     = 'deconnex/connexion';
 $routes['connex']                       = 'connexion/connexion';
-$routes['gestionStock']                 = 'renderStock/stock';
+//$routes['gestionStock']                 = 'renderStock/stock';
+$routes['gestionStock'] = 'getClient/facturation';
 $routes['gestionClient']                = 'renderListeClient/client';
 $routes['nouveauClient']                = 'renderNouveauClientForm/client';
 $routes['searchClient']                 = 'search/client';
