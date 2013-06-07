@@ -4,6 +4,14 @@ include_once _DIR_.'Projet/client/classes/clients.php';
 
 class ClientsRepository extends Repository{
 
+    public function getOne($id){
+        return parent::getOne($id);
+    }
+
+    public function save(&$objet){
+        parent::save($objet);
+    }
+
     public function getAll(){
         return parent::getAll();
     }
@@ -66,31 +74,31 @@ class ClientsRepository extends Repository{
         }
     }
 
-    public function getOne($whereSearch, $pays){
-        $requete = new Requete('select *');
-        $requete->liste(array('from clients'));
-        $requete->liste(array('where idClient = ?'));
-        $resultat = $requete->queryPrepare(array($whereSearch));
-        if ($resultat != false){
-            //$client mis a false automatiquement
-            //Dans le controller le resultat de cette fonction
-            //renvoyait bien false pourtant
-            $client = false;
-            foreach ($resultat as $valeur){
-                $client = new Clients($valeur->idClient, 
-                    $valeur->nomClient,
-                    $valeur->prenomClient, 
-                    $valeur->emailClient,
-                    $valeur->adresseClient, 
-                    $valeur->cpClient, 
-                    $pays[$valeur->idPays]);
-            }
-            return $client;
-        }else{
-            return false;
-        }
-        unset($requete);
-    }
+    //public function getOne($whereSearch, $pays){
+    //    $requete = new Requete('select *');
+    //    $requete->liste(array('from clients'));
+    //    $requete->liste(array('where idClient = ?'));
+    //    $resultat = $requete->queryPrepare(array($whereSearch));
+    //    if ($resultat != false){
+    //        //$client mis a false automatiquement
+    //        //Dans le controller le resultat de cette fonction
+    //        //renvoyait bien false pourtant
+    //        $client = false;
+    //        foreach ($resultat as $valeur){
+    //            $client = new Clients($valeur->idClient, 
+    //                $valeur->nomClient,
+    //                $valeur->prenomClient, 
+    //                $valeur->emailClient,
+    //                $valeur->adresseClient, 
+    //                $valeur->cpClient, 
+    //                $pays[$valeur->idPays]);
+    //        }
+    //        return $client;
+    //    }else{
+    //        return false;
+    //    }
+    //    unset($requete);
+    //}
 
     public function insertOne(array $values){
         $requete = new Requete('insert into');

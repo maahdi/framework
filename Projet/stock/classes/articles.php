@@ -1,6 +1,6 @@
 <?php
 
-class Article{
+class Articles{
     private $idArticle;
     private $refArticle;
     private $designation;
@@ -11,17 +11,16 @@ class Article{
     private $fournisseur;//Objet fournisseur fournis par la fabrique
     private $stockTheorique;
 
-    public function __construct($idArticle, $refArticle, $designation, $prixHT,
-        $txTVA, $stock, $stockTheo, $fournisseur, $qte = null){
-            $this->idArticle      = $idArticle;
-            $this->designation    = $designation;
-            $this->refArticle     = $refArticle;
-            $this->prixHT         = (float) $prixHT;
-            $this->txTVA          = (float) $txTVA;
+    public function __construct(&$article){
+            $this->idArticle      = $article['idArticle'];
+            $this->designation    = $article['designation'];
+            $this->refArticle     = $article['refArticle'];
+            $this->prixHT         = (float) $article['prixHT'];
+            $this->txTVA          = (float) $article['txTVA'];
             $this->prixTTC        = round($this->prixHT * (1 + ($this->txTVA / 100)),3);
-            $this->stock          = (int) $stock;
-            $this->stockTheorique = (int) $stockTheo;
-            $this->fournisseur    = $fournisseur;
+            $this->stock          = (int) $article['stock'];
+            $this->stockTheorique = (int) $article['stockTheorique'];
+            $this->fournisseur    = $article['fournisseurs'];
     }
 
     public function getStockTheorique(){

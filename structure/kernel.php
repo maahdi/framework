@@ -52,11 +52,11 @@ class Kernel{
             include _DIR_.'Projet/'.$exp[1].'/controller/'.$exp[1].$exp[2].'Controller.php';
             $controller = new $this->bundles[$exp[1].$exp[2]]();
         }
-        try{
+        //try{
             //lance la fonction spécifié dans route[$action]
             $controller->$exp[0]();
-        }catch(PDOException $mess){
-            $controller->renderErrorAction($mess);
-        }
+        //}catch(PDOException $mess){
+          //  $controller->renderErrorAction($mess);
+        //}
     }
 }

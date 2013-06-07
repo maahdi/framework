@@ -1,17 +1,18 @@
 <?php
 
-class Fournisseur{
+class Fournisseurs{
     private $idFournisseur;
     private $nomFournisseur;
     private $telFournisseur;
     private $adresseFournisseur;
     
-    public function __construct($idFournisseur, $telFournisseur, $nomFournisseur,
-                                    $adresseFournisseur){
-        $this->idFournisseur = $idFournisseur;
-        $this->nomFournisseur = $nomFournisseur;
-        $this->telFournisseur = $telFournisseur;
-        $this->adresseFournisseur = $adresseFournisseur;
+ //   public function __construct($idFournisseur, $telFournisseur, $nomFournisseur,
+ //                                   $adresseFournisseur){
+    public function __construct(&$fournisseur){
+        $this->idFournisseur = $fournisseur['idFournisseur'];
+        $this->nomFournisseur = $fournisseur['nomFournisseur'];
+        $this->telFournisseur = $fournisseur['telFournisseur'];
+        $this->adresseFournisseur = $fournisseur['adresseFournisseur'];
     }
     
     public function getIdFournisseur(){

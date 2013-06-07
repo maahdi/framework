@@ -10,5 +10,16 @@ champs :
   -
     title    : "pays"
     type     : "array"
-    relation : true
     joinOne  : "idPays"
+  -
+    title : "adresseClient"
+    type  : "string"
+  -
+    title : "prenomClient"
+    type  : "string"
+  -
+    title : "emailClient"
+    type  : "string"
+  -
+    title : "cpClient"
+    type  : "int"

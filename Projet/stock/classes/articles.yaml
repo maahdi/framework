@@ -1,0 +1,30 @@
+nom    : "articles"
+champs : 
+  -
+    title   : "idArticle"
+    type    : "int"
+    primary : true
+  -
+    title : "designation"
+    type : "string"
+  -
+    title : "refArticle"
+    type : "string"
+  -
+    title : "prixHT"
+    type  : "float"
+  -
+    title : "txTVA"
+    type  : "float"
+  -
+    title : "stock"
+    type  : "int"
+  -
+    title : "stockTheorique"
+    type  : "int"
+  -
+    title : "fournisseurs"
+    type  : "int"
+    joinOne : "idFournisseur"
+
+

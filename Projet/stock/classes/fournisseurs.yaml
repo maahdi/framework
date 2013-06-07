@@ -1,0 +1,15 @@
+nom    : "fournisseurs"
+champs : 
+  -
+    title   : "idFournisseur"
+    type    : "string"
+    primary : true
+  -
+    title : "nomFournisseur"
+    type  : "string"
+  -
+    title : "telFournisseur"
+    type  : "string"
+  -
+    title : "adresseFournisseur"
+    type  : "string"

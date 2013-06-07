@@ -4,8 +4,8 @@ class Pays{
     private $idPays;
     private $nomPays;
 
-    public function __construct($pays){
-        $this->idPays = $pays['idPays'];
+    public function __construct(&$pays){
+        $this->idPays = (int) $pays['idPays'];
         $this->nomPays = $pays['nomPays'];
     }
 

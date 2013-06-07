@@ -18,7 +18,7 @@ class ClientController extends Controller{
         $this->view->setData(array('nouveau' => false, 'liste' => false, 'advancedSearch' => false, 'newSearch' => false));
         $this->view->setSubmenu('menuClient');
         $this->url = _DIR_.'Projet/client/layout/pageClient.php';
-        $this->pays = $this->getRepository('pays')->getAll();
+        $this->pays = &$this->getRepository('pays')->getAll();
     }
 
     public function search(){
@@ -81,7 +81,7 @@ class ClientController extends Controller{
             $this->view->setData(array('liste'=>true));
         }
         $data = array();
-        $data['listeClient'] = $this->getRepository('clients')->getAll($this->pays);
+        $data['listeClient'] = $this->getRepository('clients')->getAll();
         $data['listePays'] = $this->pays;
         $this->view->render($this->url, $data);
     }
@@ -147,12 +147,6 @@ class ClientController extends Controller{
     }
 
     public function enregistrementModificationClient(){
-        //
-        //Le pays rentré est chargé et envoyé à l'objet Client
-        //Il n'y as plus qu'a modifier les autres attributs
-        //
-        $pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays');
-        $client = $this->getRepository('clients')->getOne($_POST['idClient'], $pays);
         $c = new FormValidation(array('idClient'      => 'numeric', 
                                       'nomClient'     => 'texte',
                                       'cpClient'      => 'numeric', 
@@ -161,12 +155,15 @@ class ClientController extends Controller{
                                       'nomPays'       => 'texte'), $_POST, $this);
 
         if ($this->getFormValid()){
-            $valeur = array('nomClient'      => $_POST['nomClient'],
-                            'prenomClient'   => $_POST['prenomClient'],
-                            'adresseClient'  => $_POST['adresseClient'],
-                            'cpClient'       => $_POST['cpClient']);
-            $this->modifierClient($valeur, $client);
-            $this->modele->updateOneClient($client);
+            if (!$this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays')){
+                $idPays = $this->modele->newPays($_POST['nomPays']);
+                $pays   = &$this->getRepository('pays')->getOne($idPays);
+            }else{
+                $pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']), 'nomPays');
+            }
+            $client = $this->getRepository('clients')->getOne($_POST['idClient']);
+            $client->modifierAll($_POST['nomClient'], $_POST['prenomClient'], $_POST['emailClient'], $_POST['adresseClient'], $_POST['cpClient'], $pays);
+            $this->getRepository('clients')->save($client);
             $this->view->setData(array('listeClient' => array($client->getIdClient() => $client),
                                        'liste'       => true,
                                        'listePays'   => $this->pays));
@@ -177,9 +174,7 @@ class ClientController extends Controller{
             $this->view->render($this->url);
         }else{
             $this->view->setData($_POST);
-            $pays = $this->getRepository('pays')->getAll();
-            $this->view->setData(array('client' => $this->getRepository('clients')->getOne($_POST['idClient'], $pays)));
-            unset($pays);
+            $this->view->setData(array('client' => $this->getRepository('clients')->getOne($_POST['idClient'])));
             $this->view->setData(array('modif' => true));
             $this->view->render($this->url);
         }
@@ -200,7 +195,7 @@ class ClientController extends Controller{
     }
 
     public function modifClient(){
-        $client = $this->getRepository('clients')->getOne($_GET['idClient'], $this->pays);
+        $client = $this->getRepository('clients')->getOne($_GET['idClient']);
         $this->view->setData(array('modif' => true,
                                    'client' => $client));
         $this->view->render($this->url);

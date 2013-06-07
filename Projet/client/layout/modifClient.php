@@ -11,6 +11,9 @@
     <label for='prenomClient'>Prenom</label>
     <input type='text' name='prenomClient' value='
 <?php echo ($this->getData('prenomClient') != false) ? $this->getData('prenomClient') : $this->getData('client')->getPrenomClient();?>'>
+    <label for='emailClient'>E-mail</label>
+    <input type="text" name="emailClient" value='
+<?php echo ($this->getData('emailClient') != false) ? $this->getData('emailClient') : $this->getData('client')->getEmailClient();?>'>
     <label for='adresseClient'>Adresse</label>
     <input type='text' name='adresseClient' value='
 <?php echo ($this->getData('adresseClient') != false) ? $this->getData('adresseClient') : $this->getData('client')->getAdresseClient();?>'>

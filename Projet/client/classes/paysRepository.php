@@ -5,32 +5,35 @@ include_once _DIR_.'Projet/client/classes/pays.php';
 class PaysRepository extends Repository{
 
     public function getAll(){
-        $resultat = $this->findAll('pays', 'idPays');
-        return $this->constructPays($resultat);
+        return parent::getAll();
+    }
+
+    public function getOne($id){
+        return parent::getOne($id);
     }
 
     public function getBy($search, $champ){
-        $requete = new Requete('select *');
+        $requete = new Requete('select idPays');
         $requete->liste(array('pays'), 'from');
-        $requete->where($champ,'?');
+        $requete->where('upper('.$champ.')','?', true);
         $resultat = $requete->queryPrepare(array($search));
         unset($requete);
-        return $this->constructPays($resultat);
-    }
-
-    public function constructPays($resultat){
-        if ($resultat->rowCount() > 0){
+        if ($resultat->rowCount() == 0){
+            return false;
+        }else{
             foreach ($resultat as $valeur){
-                $liste[$valeur->idPays] = new Pays($valeur->idPays, $valeur->nomPays);
+                $return = parent::getOne($valeur->idPays);
             }
+            return $return;
         }
-        return $liste; 
     }
 
-
-
-
-
-
-
+    //public function constructPays($resultat){
+    //    if ($resultat->rowCount() > 0){
+    //        foreach ($resultat as $valeur){
+    //            $liste[$valeur->idPays] = new Pays($valeur->idPays, $valeur->nomPays);
+    //        }
+    //    }
+    //    return $liste; 
+    //}
 }
