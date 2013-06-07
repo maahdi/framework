@@ -9,33 +9,43 @@ class FormValidation{
         $resultat = '';
         $listeChamps = array_keys($listeControle);
         $i = 0;
-        $nb = count($listeControle);
-        foreach($listeControle as $valeur){
-            if (!$this->testDonnee($post[$listeChamps[$i]], $valeur)){
-                if ($i == $nb-1){
-                    $resultat .=$listeChamps[$i];               
-                }else{
-                    $resultat .=$listeChamps[$i].'/';
+        $test = true;
+        //
+        // Test si le champ est vide et s'il existe dans $_POST
+        //
+        foreach ($listeControle as $valeur){
+            if preg_match(',', $valeur){
+                $exp = explode(',', $valeur);    
+                if ($exp[1] == "obligatoire"){
+                    if (!isset($post[$listeChamps[$i]]) || empty($post[$listeChamps[$i]])){
+                        $test = false;
+                        $data['champError'] = $listeChamps[$i];
+                    }
                 }
             }
             $i++;
         }
-        if ($resultat != ''){
+        $i = 0;
+        foreach($listeControle as $valeur){
+            if (!$this->testDonnee($post[$listeChamps[$i]], $valeur)){
+                    $data['champError'] = $listeChamps[$i];               
+                    $test = false;
+            }
+            $i++;
+        }
+        if (!$test){
             $controller->setFormValid(false);
-            $d = explode('/',$resultat);
-            $data = array();
-            $data['champError'] = $d;
             $controller->setData($data);
         }else{
             $controller->setFormValid(true);
         }
     }
 
-    private function testObligatory(){
-    }
-
     private function testDonnee($donnee, $type){
         switch($type){
+        case 'codePostal':
+            break;
+
         case 'texte':
             if (!is_numeric($donnee)){
                 return true;
@@ -43,6 +53,7 @@ class FormValidation{
                 return false;
             }
             break;
+
         case 'numeric':
             if (is_numeric($donnee)){
                 return true;
@@ -50,7 +61,17 @@ class FormValidation{
                 return false;
             }
             break;
+
         case 'date':
+            if (preg_match('-', $donnee)){
+                $donnee = preg_replace('-', '/', $donnee); 
+            }
+            $exp = explode('/', $donnee);
+            if (checkdate($exp[0], $exp[1], $exp[2])){
+                return true;
+            }else{
+                return false;
+            }
             break;
         }
     }

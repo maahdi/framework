@@ -61,7 +61,7 @@ class ClientController extends Controller{
             $search = strtoupper($_POST['search']);
             break;
         }
-        $data['listeClient'] = $this->getRepository('clients')->getBy($champ, $search, $this->pays);
+        $data['listeClient'] = $this->getRepository('clients')->getBy($champ, $search);
         $this->view->turnSearchBarOff();
         $this->view->setData(array('liste'     => true,
                                    'newSearch' => true,
@@ -147,10 +147,9 @@ class ClientController extends Controller{
     }
 
     public function enregistrementModificationClient(){
-        $c = new FormValidation(array('idClient'      => 'numeric', 
-                                      'nomClient'     => 'texte',
+        $c = new FormValidation(array('nomClient'     => 'texte, obligatoire',
                                       'cpClient'      => 'numeric', 
-                                      'prenomClient'  => 'texte', 
+                                      'prenomClient'  => 'texte, obligatoire', 
                                       'adresseClient' => 'texte', 
                                       'nomPays'       => 'texte'), $_POST, $this);
 
