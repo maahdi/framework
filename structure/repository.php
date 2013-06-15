@@ -131,7 +131,6 @@ class Repository{
                 $primary = $valeur['title'];
             }
             if (array_key_exists('joinOne',$valeur)){
-                echo 'lol';
                 $join = true;
                 $tableJointe = $valeur['title'];
                 $foreignKey = $valeur['joinOne'];

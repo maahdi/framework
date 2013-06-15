@@ -16,7 +16,7 @@ class ClientModele extends Modele{
 
     public function deleteOneClient($client){
         $requete = new Requete('delete');
-        $requete->setFromPart(array('clients'));
+        $requete->liste(array('clients'), 'from');
         $requete->where('idClient','?');
         $requete->queryPrepare(array($client->getIdClient()));
         unset($requete);
