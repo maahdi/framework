@@ -1,3 +1,4 @@
+--lol
 -- phpMyAdmin SQL Dump
 -- version 4.0.2
 -- http://www.phpmyadmin.net
