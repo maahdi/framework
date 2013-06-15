@@ -41,12 +41,12 @@ class Commande{
     }
     
     public function setAcompte($valeur){
-        $this->acompte = $valeur;
+        $this->acompte = (float) $valeur;
         $this->setSommePaid($valeur);
     }
 
     public function setSommePaid($valeur){
-        $this->sommePaid = $valeur;
+        $this->sommePaid = (float) $valeur;
     }
 
     public function getSommePaid(){

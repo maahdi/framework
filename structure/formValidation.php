@@ -14,7 +14,7 @@ class FormValidation{
         // Test si le champ est vide et s'il existe dans $_POST
         //
         foreach ($listeControle as $valeur){
-            if preg_match(',', $valeur){
+            if (preg_match(',', $valeur)){
                 $exp = explode(',', $valeur);    
                 if ($exp[1] == "obligatoire"){
                     if (!isset($post[$listeChamps[$i]]) || empty($post[$listeChamps[$i]])){

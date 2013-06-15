@@ -15,7 +15,30 @@ class FacturationClientController extends Controller{
         //
         $this->modele = new FacturationClientModele();
         $this->view->setSubMenu('menuFacturationClient');
-        $this->urlCommande = _DIR_.'Projet/serialized/commandeEnCours.txt';
+        $this->urlCommande = _DIR_.'Projet/serialized/commandeEnCours'.$_SESSION['token'].'.txt';
+    }
+
+    public function facturerCommande(){
+        $commande = $this->getOneCommande($_GET['idCmd'],'com');
+        $this->modele->facturerCommande($commande[$_GET['idCmd']]);    
+        $this->setData(array('afficheFacture' => true,
+                             'facture' => $commande[$_GET['idCmd']]));
+        $this->view->render($this->url);
+    }
+
+    public function afficheFacture(){
+        if (is_file($this->urlCommande)){
+            unlink($this->urlCommande);
+        }
+        $this->setData(array('liste' => true));
+        $data['listeFacture'] = $this->getAllCommande('fact'); 
+        $this->view->render($this->url, $data);
+    }
+    public function displayOneFacture(){
+        $facture = $this->getOneCommande($_GET['idCmd'], 'fact');
+        $this->setData(array('facture' => $facture[$_GET['idCmd']]));
+        $this->setData(array('afficheFacture' => true));
+        $this->view->render($this->url);
     }
 
     public function displayAccueilClient(){
@@ -29,12 +52,12 @@ class FacturationClientController extends Controller{
     // Retourne array( id => Objet )
     //
     private function getAllCommande($factOrCom){
-        $pays = $this->getRepository('pays')->getAll();
-        $clients = $this->getRepository('clients')->getAll($pays);
-        unset($pays);
-        $fournisseurs = $this->getRepository('fournisseurs')->getAll();
-        $articles = $this->getRepository('articles')->getAll($fournisseurs);
-        unset($fournisseurs);
+        //$pays = $this->getRepository('pays')->getAll();
+        $clients = $this->getRepository('clients')->getAll();
+        //unset($pays);
+        //$fournisseurs = $this->getRepository('fournisseurs')->getAll();
+        $articles = $this->getRepository('articles')->getAll();
+        //unset($fournisseurs);
         return $this->getRepository('commande')->getAll($articles, $clients, $factOrCom);
     }
 
@@ -44,12 +67,12 @@ class FacturationClientController extends Controller{
     // Retourne un Objet
     //
     private function getOneCommande($idCmd, $factOrCom){
-        $pays = $this->getRepository('pays')->getAll();
-        $clients = $this->getRepository('clients')->getAll($pays);
-        unset($pays);
-        $fournisseurs = $this->getRepository('fournisseurs')->getAll();
-        $articles = $this->getRepository('articles')->getAll($fournisseurs);
-        unset($fournisseurs);
+        //$pays = $this->getRepository('pays')->getAll();
+        $clients = $this->getRepository('clients')->getAll();
+        //unset($pays);
+        //$fournisseurs = $this->getRepository('fournisseurs')->getAll();
+        $articles = $this->getRepository('articles')->getAll();
+        //unset($fournisseurs);
         return $this->getRepository('commande')->getOne($idCmd, $articles, $clients, $factOrCom);
     }
 
@@ -84,12 +107,12 @@ class FacturationClientController extends Controller{
         //
         //Récupération des repository pour enregistrer mon objet Commande
         //
-        $fournisseur = $this->getRepository('fournisseurs')->getAll();
-        $article = $this->getRepository('articles')->getAll ($fournisseur);
-        unset($fournisseur);
-        $pays = $this->getRepository('pays')->getAll();
-        $client = $this->getRepository('clients')->getOne($_GET['idClient'], $pays);
-        unset($pays);
+        //$fournisseur = $this->getRepository('fournisseurs')->getAll();
+        $article = $this->getRepository('articles')->getAll ();
+        //unset($fournisseur);
+        //$pays = $this->getRepository('pays')->getAll();
+        $client = $this->getRepository('clients')->getOne($_GET['idClient']);
+        //unset($pays);
         $commande->setDateCmd($_GET['dateCmd']);
         $commande->setOneArticle($article[$_GET['idArticle']]);
         $commande->setQteCmd($_GET['idArticle'],$_GET['qte']);
@@ -150,15 +173,15 @@ class FacturationClientController extends Controller{
         if (is_file($this->urlCommande)){
             unlink($this->urlCommande);
         }
-        $pays             = $this->getRepository('pays')->getAll();
-        $data['clients']  = $this->getRepository('clients')->getAll($pays);
-        unset($pays);
-        $fournisseurs     = $this->getRepository('fournisseurs')->getAll();
-        $data['articles'] = $this->getRepository('articles')->getAll($fournisseurs);
-        unset($fournisseurs);
+        //$pays             = $this->getRepository('pays')->getAll();
+        $data['clients']  = $this->getRepository('clients')->getAll();
+        //unset($pays);
+        //$fournisseurs     = $this->getRepository('fournisseurs')->getAll();
+        $data['articles'] = $this->getRepository('articles')->getAll();
+        //unset($fournisseurs);
         $this->view->setData($this->getNewId());
         $this->view->setData(array('afficherCommande'   => true,
-                                   'dateCmd'            => time()));
+                                   'dateCmd'            => date('d-m-Y')));
         $this->view->render($this->url, $data); 
     }
 

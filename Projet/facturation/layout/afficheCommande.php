@@ -144,8 +144,8 @@ if (isset($articles)){
 // Le controle marche ici
 //
 if (isset($commande) && (!$commande->getValidationCommande())){?>
-<form action="<?php echo _LIENDIR_.'facturerCommande';?>">
-    <input type="submit" value="Facturer" onclick="if(!confirm('Voulez-vous vraiment supprimer la commande <?php echo $idCmd;?> de l\'utilisateur <?php echo $commande->getNomClient();?> ?')) return false;">    
+<form action="<?php echo _LIENDIR_.'facturerCommande&idCmd='.$idCmd;?>">
+    <input type="submit" value="Facturer" onclick="if(!confirm('Voulez-vous vraiment passer la commande <?php echo $idCmd;?> de l\'utilisateur <?php echo $commande->getNomClient();?> en facture ?')) return false;">    
 </form>
 <a href="<?php echo _LIENDIR_.'commandeClient';?>">Retour liste des commandes</a>
 <?php } ?>
