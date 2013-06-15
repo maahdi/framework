@@ -19,6 +19,9 @@ if ($this->getData('liste')){
 if ($this->getData('afficherCommande')){
     $this->generateFichier('afficheCommande', 'facturation');
 }
+if ($this->getData('afficheFacture')){
+    $this->generateFichier('afficheFacture', 'facturation');
+}
 ?>
 
 

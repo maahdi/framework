@@ -58,4 +58,19 @@ class FacturationClientModele extends Modele{
         $requete->queryPrepare(array($idCmd));
     }
 
+    public function facturerCommande($commande){
+        $requete = new Requete('update commandes set');
+        $requete->liste(array('valid = ?'));
+        $requete->where('idCmd', '?');
+        $requete->queryPrepare(array('1',
+                                     $commande->getIdCmd()));
+        foreach ($commande->getListeArticle() as $valeur){
+            $requete->liste(array('update articles set'));
+            $requete->liste(array('stock = stock-?'));
+            $requete->where('idArticle', '?');
+            $requete->queryPrepare(array($valeur['qte'],
+                                         $valeur['article']->getIdArticle()));
+        }
+    }
+
 }

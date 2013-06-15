@@ -43,11 +43,16 @@ class CommandeRepository extends Repository{
             $liste[$valeur->idCmd]->setOneArticle($articles[$valeur->idArticle]);
             $liste[$valeur->idCmd]->setQteCmd($valeur->idArticle, $valeur->qteCmd);
         }
+        $format = 'd-m-Y';
+        $unValid = array();
+        $valid = array();
         foreach ($commandes as $valeur){
-            $liste[$valeur->idCmd]->setDateCmd($valeur->dateCmd);
+            $date = new DateTime($valeur->dateCmd);
+            $liste[$valeur->idCmd]->setDateCmd($date->format($format));
             $liste[$valeur->idCmd]->setClient($client[$valeur->idClient]);
             if ($valeur->valid == 1){
                 $liste[$valeur->idCmd]->setValidation();
+                $valid[$valeur->idCmd] = $valeur->idCmd;
             }else{
                 $unValid [$valeur->idCmd] = $valeur->idCmd;
             }
@@ -55,7 +60,7 @@ class CommandeRepository extends Repository{
             $liste[$valeur->idCmd]->setAcompte($valeur->acompte);
             $liste[$valeur->idCmd]->setNbPaiement($valeur->nbPaiement);
         }
-        return $this->checkValid($liste, $unValid, $factOrCom);
+        return $this->checkValid($liste, $unValid, $valid, $factOrCom);
     }
 
     //
@@ -81,14 +86,18 @@ class CommandeRepository extends Repository{
         // entre les commande et les commandes validées (factures)
         //
         $unValid = array();
+        $valid = array();
+        $format = 'd-m-Y';
         foreach ($rslt as $valeur){
+            $date = new DateTime($valeur->dateCmd);
             $commande = new Commande($valeur->idCmd);
             $commande->setClient($client[$valeur->idClient]);
-            $commande->setDateCmd($valeur->dateCmd);
+            $commande->setDateCmd($date->format($format));
             $commande->setAcompte($valeur->acompte);
             $nb = $valeur->nbPaiement;
             if ($valeur->valid == 1){
                 $commande->setValidation();
+                $valid[$commande->getIdCmd()] = $commande->getIdCmd();
             }else{
                 $unValid[$commande->getIdCmd()] = $commande->getIdCmd();
             }
@@ -107,7 +116,7 @@ class CommandeRepository extends Repository{
         //Retour comme sa car checkValid renvoi un tableau associatif
         //
         unset($requete);
-        return $this->checkValid(array($commande), $unValid, $factOrCom); 
+        return $this->checkValid(array($commande), $unValid, $valid, $factOrCom); 
     }
 
     //
@@ -194,13 +203,16 @@ class CommandeRepository extends Repository{
 
     //public function insertOne($idCmd, $idClient, $date, $qte, $idArticle){
     public function insertOne($commande){
+        $format = 'Y-m-d H:i:s';
+        $date = new DateTime($commande->getDateCmd());
+        echo $date->format($format);
         $requete = new Requete('insert into');
         $requete->liste(array('commandes'));
         $requete->liste(array('idCmd','idClient', 'dateCmd','totalHT', 'totalTVA', 'totalTTC', 'acompte', 'nbPaiement', 'sommePayed'),'(',')');
         $requete->liste(array('?,?,?,?,?,?,?,?,?'),'values(',')');
         $requete->queryPrepare(array($commande->getIdCmd(), 
                                      $commande->getIdClient(),
-                                     $commande->getDateCmd(),
+                                     $date->format($format),
                                      $commande->getTotalHT(),
                                      $commande->getTotalTVA(),
                                      $commande->getTotalTTC(),
@@ -228,7 +240,7 @@ class CommandeRepository extends Repository{
     //Vérifie que la liste retourne soit les factures $commande::valid = 1
     //soit les commandes $commande::valid = 0
     //
-    private function checkValid($liste, $unValid, $factOrCom){
+    private function checkValid($liste, $unValid, $valid, $factOrCom){
         $rslt = array();
         switch ($factOrCom){
         case 'fact':
@@ -238,7 +250,7 @@ class CommandeRepository extends Repository{
                 // Pour chaque on compare s'ils faisait partis des commandes::valid était = false
                 // Si c'est pas le cas on met la commande dans le retourne
                 //
-                if (isset($unValid[$valeur->getIdCmd()]) && $valeur->getIdCmd() != $unValid[$valeur->getIdCmd()]){
+                if (isset($valid[$valeur->getIdCmd()]) && $valeur->getIdCmd() == $valid[$valeur->getIdCmd()]){
                     $rslt[$valeur->getIdCmd()] = $valeur;
                 }
             }
