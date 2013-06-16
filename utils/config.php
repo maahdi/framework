@@ -4,7 +4,7 @@ class Config{
 	const SQL_HOST = "localhost";
 	const SQL_PASS ="martini";
 	const SQL_USER = "yoshi";
-    const SQL_BASE = "appligestionMVC";
+    const SQL_BASE = "appligestionmvc";
 
 	static function hashPassword($p){
 		return sha1(self::SALT.md5($p.self::SALT).sha1(self::SALT));
