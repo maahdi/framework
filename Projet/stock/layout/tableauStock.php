@@ -7,7 +7,6 @@ if ($this->getData('listeArticles') != false){
     $image = '../images/boutonTri.png';
 ?>
 <thead class='enteteListe'>
-    <th class='enteteListe'></th>
 <?php 
     echo "<th class='enteteListe'>CodeArticle<a href='"._LIENDIR_.$action."idArticle' >";
         echo "<img src='".$image."' border='0'></a></th>";
@@ -33,11 +32,10 @@ if ($this->getData('listeArticles') != false){
     </thead>
 <tbody>
 <?php
-       $i = 1;
 if ($this->getData('listeArticles')){
+    $i = 0;
     foreach ($this->getData('listeArticles') as $key => $valeur){
         $id = $valeur->getIdArticle();
-        echo "<tr><td><input type='checkbox' name='checkbox".$i."' value='".$id."'></td>";
         echo "<td>".$valeur->getIdArticle()."</td>";
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'refArticle', 'texte',".$i.",'articles')\">".$valeur->getRefArticle()."</td>";
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'designation', 'texte-multi',".$i.",'articles')\">".$valeur->getDesignation()."</td>";
@@ -61,23 +59,6 @@ if ($this->getData('listeArticles')){
 ?>
     </tbody>
 </table>
-
-<?php echo '<form method="POST" action="'._LIENDIR_.'selectArticle">'; ?>
-    <table class="tableau"> 
-        <tr>
-            <td class='enteteListe'>
-                <img id="flechebas" src="../images/fleche-retour.png" border="0">
-            </td>
-            <td class='enteteListe' colspan="2">
-
-                <input type="submit" id="boutonbas" value="Supprimer la sélection">
-                <?php 
-                    echo '<input type="hidden" name="indiceCheckbox" value="'.$i.'">'; 
-                ?>
-            </td>
-        </tr>
-    </table>      
-</form>
 
 <?php }else{
         echo "<div id='notfound'><h2>Pas d'enregistrement trouvé pour : ".$_REQUEST['search']."</h2>";

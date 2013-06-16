@@ -15,13 +15,7 @@ class ClientsRepository extends Repository{
     public function getAll(){
         return parent::getAll();
     }
-    //ClientsRepository a besoin de l'objet Pays pour satisfaire la relation SQL
-    //public function getAll($pays){
-    //    $resultat = $this->findAll('clients','idClient');
-    //    return $this->constructClients($resultat, $pays);
-    //}
 
-    // $valeur = array('champ' , valeur)
     public function modifierClient($valeur, $id, $pays){
         $i = 0;
         $resultat = $this->findBy('clients', 'idClient', $id);
@@ -43,63 +37,6 @@ class ClientsRepository extends Repository{
         return $client;
     }
 
-    private function constructClients($resultat, $pays){
-        if ($resultat->rowCount() > 0){
-            foreach ($resultat as $valeur){
-                if (is_array($pays)){
-                    foreach($pays as $p){
-                        if ($p->getIdPays() == $valeur->idPays){
-                            $liste[$valeur->idClient] = new Clients($valeur->idClient, 
-                                                                    $valeur->nomClient,
-                                                                    $valeur->prenomClient, 
-                                                                    $valeur->emailClient,
-                                                                    $valeur->adresseClient, 
-                                                                    $valeur->cpClient, 
-                                                                    $p);
-                        }
-                    }
-                }else{
-                    $liste[$valeur->idClient] = new Clients($valeur->idClient, 
-                        $valeur->nomClient,
-                        $valeur->prenomClient, 
-                        $valeur->emailClient,
-                        $valeur->adresseClient, 
-                        $valeur->cpClient, 
-                        $pays[$valeur->idPays]);
-                }
-            }
-            return $liste;
-        }else{
-            return false;
-        }
-    }
-
-    //public function getOne($whereSearch, $pays){
-    //    $requete = new Requete('select *');
-    //    $requete->liste(array('from clients'));
-    //    $requete->liste(array('where idClient = ?'));
-    //    $resultat = $requete->queryPrepare(array($whereSearch));
-    //    if ($resultat != false){
-    //        //$client mis a false automatiquement
-    //        //Dans le controller le resultat de cette fonction
-    //        //renvoyait bien false pourtant
-    //        $client = false;
-    //        foreach ($resultat as $valeur){
-    //            $client = new Clients($valeur->idClient, 
-    //                $valeur->nomClient,
-    //                $valeur->prenomClient, 
-    //                $valeur->emailClient,
-    //                $valeur->adresseClient, 
-    //                $valeur->cpClient, 
-    //                $pays[$valeur->idPays]);
-    //        }
-    //        return $client;
-    //    }else{
-    //        return false;
-    //    }
-    //    unset($requete);
-    //}
-
     public function insertOne(array $values){
         $requete = new Requete('insert into');
         $requete->liste(array('clients'));
@@ -108,40 +45,38 @@ class ClientsRepository extends Repository{
         unset($requete);
     }
 
-    public function getBy($where,$whereSearched, $pays){
-        $requete = new Requete('select');
-        $requete->liste(array('*'));
-        $requete->setFromPart(array('clients'));
+    public function getBy($where, $whereSearched){
+        $requete = new Requete('select idClient');
+        $requete->liste(array('clients'), 'from');
         if (is_numeric($whereSearched)){
-            //$requete->liste(array($where), '?');
-            $requete->liste(array($where), 'where', "like '%$whereSearched%'");
-            $resultat = $requete->queryPrepare(array("%$whereSearched%"));
+            $requete->liste(array($where), 'where', 'like ?');
+            $resultat = $requete->queryPrepare(array('%'.$whereSearched.'%'));
         }else{
-            //if ($where == 'adresseClient'){
             $requete->liste(array("upper($where)"), 
-            'where',
-            "like '%$whereSearched%'");
-            $resultat = $requete->queryPrepare(array("%$whereSearched%"));
-            //}else{
-            //    $requete->where($where,'?');
-            //    $resultat = $requete->queryPrepare(array($whereSearched));
-            //}
+                                  'where',
+                                  'like ? ');
+            $resultat = $requete->queryPrepare(array('%'.$whereSearched.'%'));
+        }
+        foreach($resultat as $valeur){
+            $clients[$valeur->idClient] = $this->getOne($valeur->idClient);
         }
         unset($requete);
-        return $this->constructClients($resultat, $pays);
+        return $clients;
     }
 
-    public function getByNomOrPrenom($whereSearch, $pays){
-        $requete = new Requete('select *');
-        $requete->liste(array('upper(nomClient)','from'), 
-        'where',
-        "like '%$whereSearch%'");
-        $requete->liste(array('upper(prenomClient)'), 
-        'or',
-        "like '%$whereSearch%'");
-        $resultat = $requete->query();
+    public function getByNomOrPrenom($whereSearch){
+        $requete = new Requete('select idClient');
+        $requete->liste(array('clients'), 'from');
+        $requete->liste(array('where upper(nomClient) like ?'));
+        $requete->liste(array('or upper(prenomClient) like ?'));
+        $resultat = $requete->queryPrepare(array('%'.$whereSearch.'%',
+                                                 '%'.$whereSearch.'%'));
+        foreach ($resultat as $valeur){
+            echo $valeur->idClient;
+            $clients[$valeur->idClient] = $this->getOne($valeur->idClient);
+        }
         unset($requete);
-        return $this->constructClients($resultat, $pays);
+        return $clients;
     }
 
 }

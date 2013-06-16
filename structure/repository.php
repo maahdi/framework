@@ -149,8 +149,8 @@ class Repository{
             $champs[] = $tableJointe;
         }
         $primaryKey = array();
+        $liste[$data['nom']] = array();
         foreach ($rslt as $valeur){
-            $codeId = $valeur->$primary;
             foreach($champs as $champ){
                 if ($join && $champ == $tableJointe){
                     $requete->liste(array($this->table.'.'.$foreignKey),'select');
@@ -159,18 +159,14 @@ class Repository{
                     $requete->where($primary, $valeur->$primary);
                     $ids = $requete->query();
                     foreach ($ids as $key){
-                        $liste[$valeur->$primary][$champ] = &$this->repositoryFinder->getAnotherRepo($tableJointe)->getOne($key->$foreignKey);
+                        $liste[$data['nom']][$tableJointe] = &$this->repositoryFinder->getAnotherRepo($tableJointe)->getOne($key->$foreignKey);
                     }
                 }else{
-                    $liste[$valeur->$primary][$champ] = $valeur->$champ;
+                    $liste[$data['nom']][$champ] = $valeur->$champ;
                 }
             }
         }
-        $return = new $data['nom']($liste[$codeId]);
-        unset($liste);
-        unset($champs);
-        unset($data);
-        unset($requete);
+        $return = new $data['nom']($liste[$data['nom']]);
         return $return;
     }
 

@@ -1,15 +1,15 @@
 <h1>Liste des clients</h1>
 <table class="tableau">
 <?php 
+$order = $this->getData('order');
 if ($this->getData('listeClient') != false){
     $action = 'afficheListeClient&tri=';
     $image = '../images/boutonTri.png';
 ?>
     <thead class="enteteListe">
-        <th class="enteteListe"></th>
 <?php
-    echo '<th class="enteteListe">CodeClient<a href="'._LIENDIR_.$action.'idClient" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
+    echo '<th class="enteteListe"><ul><li>CodeClient</li><li><a href="'._LIENDIR_.$action.'idClient" >';
+        echo '<img src="'.$image.'" border="0"></a></li></ul></th>';
     echo '<th class="enteteListe">Nom <a href="'._LIENDIR_.$action.'nomClient" >';
         echo '<img src="'.$image.'" border="0"></a></th>';
     echo '<th class="enteteListe" >Prenom <a href="'._LIENDIR_.$action.'prenomClient" >';
@@ -27,10 +27,9 @@ if ($this->getData('listeClient') != false){
     </thead>
 <tbody>
 <?php
-    $i = 1;
+    $i = 0;
     foreach ($this->getData('listeClient') as $key => $valeur){
         $id = $valeur->getIdClient();
-        echo '<tr><td><input type="checkbox" name="checkbox'.$i.'" value="'.$valeur->getIdClient().'"></td>';
         echo '<td style="width:10%;">'.$valeur->getIdClient().'</td>';
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'nomClient', 'texte',".$i.",'clients')\">".$valeur->getNomClient()."</td>";
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'prenomClient', 'texte',".$i.",'clients')\">".$valeur->getprenomClient()."</td>";
@@ -66,19 +65,6 @@ if ($this->getData('listeClient') != false){
 ?>
            </tbody>
     </table>
-        <?php echo '<form method="POST" action="'._LIENDIR_.'selectClient">'; ?>
-         <table class="tableau">   <tr >
-                <td class="enteteListe">
-                    <img id="flechebas" src="../images/fleche-retour.png" border="0">
-                </td>
-                <td class="enteteListe" colspan="2">
-
-                    <input id="boutonbas" type="submit" value="Supprimer la sélection">
-<?php 
-    echo '<input type="hidden" name="indiceCheckbox" value="'.$i.'">'; 
-?>
-                </td>
-            </tr></table>
 
 <?php }else{
     echo '<div id=\'notfound\'><h2>Pas d\'enregistrement trouvé pour : '.$_REQUEST['search'].'</h2>';

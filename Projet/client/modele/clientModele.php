@@ -14,6 +14,14 @@ class ClientModele extends Modele{
         return $id;
     }
 
+    public function newClient($id){
+        $requete = new Requete('insert into clients');
+        $requete->liste(array('idClient'),'(',')');
+        $requete->liste(array('?'),'values(',')');
+        echo $requete->toString();
+        $requete->queryPrepare(array($id));
+    }
+
     public function deleteOneClient($client){
         $requete = new Requete('delete');
         $requete->setFromPart(array('clients'));

@@ -23,7 +23,7 @@ class ClientController extends Controller{
 
     public function search(){
         $data = array();
-        $data['listeClient'] = $this->getRepository('clients')->getByNomOrPrenom(strtoupper($_POST['search']), $this->pays);
+        $data['listeClient'] = $this->getRepository('clients')->getByNomOrPrenom(strtoupper($_POST['search']));
         $this->view->turnSearchBarOff();
         $this->view->setData(array('liste'     => true,
                                    'listePays' => $this->pays));
@@ -110,31 +110,24 @@ class ClientController extends Controller{
         // Rempli aussi View::data[indice] = value
         //
         $c = new FormValidation(array('idClient'      => 'numeric', 
-                                      'nomClient'     => 'texte',
-                                      'cpClient'      => 'numeric', 
-                                      'emailClient'   => 'texte',
+                                      'nomClient'     => 'texte,obligatoire',
+                                      'cpClient'      => 'codePostal', 
+                                      'emailClient'   => 'email',
                                       'prenomClient'  => 'texte', 
                                       'adresseClient' => 'texte', 
                                       'nomPays'       => 'texte'), $_POST, $this);
         if ($this->getFormValid()){
-            $pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays');
-            if ($pays == false){
+            if (!$pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays')){
                 //
                 // insertion du nouveau pays possible
                 //
             }else{
-
-                foreach($pays as $valeur){
-                   $this->getRepository('clients')->insertOne(array($_POST['idClient'],
-                                                                    $_POST['nomClient'],
-                                                                    $_POST['prenomClient'], 
-                                                                    $_POST['emailClient'],
-                                                                    $_POST['adresseClient'],
-                                                                    $_POST['cpClient'], 
-                                                                    $valeur->getIdPays()));
-                }
+                $this->modele->newClient($_POST['idClient']);
+                $client = $this->getRepository('clients')->getOne($_POST['idClient']);
+                $client->modifierAll($_POST['nomClient'], $_POST['prenomClient'], $_POST['emailClient'], $_POST['adresseClient'], $_POST['cpClient'], $pays);
+                $this->getRepository('clients')->save($client);
             }
-            $data['listeClient'] = array ($this->getRepository('clients')->getOne($_POST['idClient'],$pays));
+            $data['listeClient'] = array ($client);
             $this->view->setData(array('liste'     => true,
                                        'retour' => true));
             $this->view->turnOffAjax();
@@ -148,19 +141,18 @@ class ClientController extends Controller{
 
     public function enregistrementModificationClient(){
         $c = new FormValidation(array('nomClient'     => 'texte, obligatoire',
-                                      'cpClient'      => 'numeric', 
-                                      'prenomClient'  => 'texte, obligatoire', 
-                                      'adresseClient' => 'texte', 
-                                      'nomPays'       => 'texte'), $_POST, $this);
+                                      'cpClient'      => 'codePostal', 
+                                      'prenomClient'  => 'texte,obligatoire', 
+                                      'adresseClient' => 'alphaNum', 
+                                      'nomPays'       => 'texte',
+                                      'emailClient'   => 'email'), $_POST, $this);
 
         if ($this->getFormValid()){
-            if (!$this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays')){
+            if (!$pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays')){
                 $idPays = $this->modele->newPays($_POST['nomPays']);
-                $pays   = &$this->getRepository('pays')->getOne($idPays);
-            }else{
-                $pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']), 'nomPays');
+                $pays = &$this->getRepository('pays')->getOne($idPays);
             }
-            $client = $this->getRepository('clients')->getOne($_POST['idClient']);
+            $client = &$this->getRepository('clients')->getOne($_POST['idClient']);
             $client->modifierAll($_POST['nomClient'], $_POST['prenomClient'], $_POST['emailClient'], $_POST['adresseClient'], $_POST['cpClient'], $pays);
             $this->getRepository('clients')->save($client);
             $this->view->setData(array('listeClient' => array($client->getIdClient() => $client),
