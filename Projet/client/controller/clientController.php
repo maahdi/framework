@@ -80,9 +80,9 @@ class ClientController extends Controller{
         if (!$this->view->getData('liste')){
             $this->view->setData(array('liste'=>true));
         }
-        $data = array();
+        $data                = array();
         $data['listeClient'] = $this->getRepository('clients')->getAll();
-        $data['listePays'] = $this->pays;
+        $data['listePays']   = $this->pays;
         $this->view->render($this->url, $data);
     }
 
@@ -129,7 +129,7 @@ class ClientController extends Controller{
             }
             $data['listeClient'] = array ($client);
             $this->view->setData(array('liste'     => true,
-                                       'retour' => true));
+                                       'retour'    => true));
             $this->view->turnOffAjax();
             $this->view->render($this->url, $data);
         }else{
@@ -187,7 +187,7 @@ class ClientController extends Controller{
 
     public function modifClient(){
         $client = $this->getRepository('clients')->getOne($_GET['idClient']);
-        $this->view->setData(array('modif' => true,
+        $this->view->setData(array('modif'  => true,
                                    'client' => $client));
         $this->view->render($this->url);
     }
@@ -226,7 +226,7 @@ class ClientController extends Controller{
 
     private function modifierClient(array $valeur, $client){
         $key = array_keys($valeur);
-        $i = 0;
+        $i   = 0;
         foreach ($valeur as $v){
             //
             //ex : '$client->setIdClient()'
