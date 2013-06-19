@@ -88,7 +88,7 @@ if ($this->getData('listeClient') != false){
     </table>
 
 <?php }else{
-    echo '<div id=\'notfound\'><h2>Pas d\'enregistrement trouvé </h2>';
+    echo '<div id=\'notfound\'><h2>Pas d\'enregistrement trouvé !!!</h2>';
     if (!$this->getData('newSearch')){
         echo '<a href=\''._LIENDIR_.'gestionClient\'>Retour</a></div>';       
     }else{

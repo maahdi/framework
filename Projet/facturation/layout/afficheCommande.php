@@ -145,9 +145,10 @@ if (isset($articles)){
 // Le controle marche ici
 //
 if (isset($commande) && (!$commande->getValidationCommande())){?>
-<form class="bouForm" action="<?php echo _LIENDIR_.'facturerCommande&idCmd='.$idCmd;?>">
+<!-- <form class="bouForm" action="<?php echo _LIENDIR_.'facturerCommande&idCmd='.$idCmd;?>">
     <input type="submit" value="Facturer" onclick="if(!confirm('Voulez-vous vraiment passer la commande <?php echo $idCmd;?> de l\'utilisateur <?php echo $commande->getNomClient();?> en facture ?')) return false;">    
-</form>
+</form>-->
+<a href="<?php echo _LIENDIR_.'facturerCommande&idCmd='.$idCmd; ?>">Facturer</a></td></tr></table>
 <?php } ?>
 
 

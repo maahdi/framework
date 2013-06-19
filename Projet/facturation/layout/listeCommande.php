@@ -80,6 +80,6 @@ foreach ($liste as $valeur){
            </tbody>
     </table>
 <?php }else{
-    echo '<div id=\'notfound\'><h2>Pas d\'enregistrement trouvé pour !!!</h2></div>';
+    echo '<div id=\'notfound\'><h2>Pas d\'enregistrement trouvé !!!</h2></div>';
 
 }

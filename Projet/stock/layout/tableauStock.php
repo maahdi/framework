@@ -68,7 +68,7 @@ if ($this->getData('listeArticles')){
             <img src='../images/plus.gif' border='0'></a>
             <a href='"._LIENDIR_."suppressionStockArticle&idArticle=".$valeur->getIdArticle()."'>
             <img src='../images/moins.gif' border='0'></a></ul></td>";
-        echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'stockTheorique', 'float',".$i.",'articles')\">".$valeur->getStockTheorique()."</td>";
+        echo "<td class='texte' >".$valeur->getStockTheorique()."</td>";
 
         echo "<td class='texte'>".$valeur->getNomFournisseur()."</td>";
         $i++;
@@ -80,6 +80,6 @@ if ($this->getData('listeArticles')){
 <?php
 
  }else{
-        echo "<div id='notfound'><h2>Pas d'enregistrement trouvé pour : ".$_REQUEST['search']."</h2>";
-        echo "<a href='"._LIENDIR_."afficheListeArticle'>Retour</a></div>";
+        echo '<div id=\'notfound\'><h2>Pas d\'enregistrement trouvé !!!</h2>';
+        echo '<a href=\''._LIENDIR_.'afficheListeArticle\'>Retour</a></div>';
     }
