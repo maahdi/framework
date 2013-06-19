@@ -23,20 +23,22 @@ class FacturationClientModele extends Modele{
         $requete = new Requete('select qteCmd from produitcmd');
         $requete->where('idArticle', $value[0]);
         $pdo = $requete->queryPrepare(array($value[0]));
-        foreach ($pdo as $valeur){
-            $stockARajouter = $valeur->qteCmd;
+        if ($pdo->rowCount() > 0){
+            foreach ($pdo as $valeur){
+                $stockARajouter = $valeur->qteCmd;
+            }
+            $requete->liste(array($table),'delete from');
+            //$requete = new Requete('delete from '.$table);
+            foreach($champ as $valeur){
+                $requete->where($valeur, '?');
+            }
+            $requete->queryPrepare($value);
+            $requete->liste(array('update articles'));
+            $requete->liste(array('set stockTheorique = stockTheorique + ?'));
+            $requete->where('idArticle','?');
+            $requete->queryPrepare(array($stockARajouter, $value[0]));
+            unset($requete);
         }
-        $requete->liste(array($table),'delete from');
-        //$requete = new Requete('delete from '.$table);
-        foreach($champ as $valeur){
-            $requete->where($valeur, '?');
-        }
-        $requete->queryPrepare($value);
-        $requete->liste(array('update articles'));
-        $requete->liste(array('set stockTheorique = stockTheorique + ?'));
-        $requete->where('idArticle','?');
-        $requete->queryPrepare(array($stockARajouter, $value[0]));
-        unset($requete);
     }
 
     public function deleteCommande($idCmd){
@@ -44,18 +46,20 @@ class FacturationClientModele extends Modele{
         $requete->liste(array('produitcmd'), 'from');
         $requete->where('idCmd', '?');
         $pdoStatement = $requete->queryPrepare(array($idCmd));
+        if ($pdoStatement->rowCount() > 0 ){
         foreach ($pdoStatement as $valeur){
-            $requete->liste(array('update articles'));
-            $requete->liste(array('set stockTheorique = stockTheorique + ?'));
-            $requete->where('idArticle','?');
-            $requete->queryPrepare(array($valeur->qteCmd, $valeur->idArticle));
+                $requete->liste(array('update articles'));
+                $requete->liste(array('set stockTheorique = stockTheorique + ?'));
+                $requete->where('idArticle','?');
+                $requete->queryPrepare(array($valeur->qteCmd, $valeur->idArticle));
+            }
+            $requete->liste(array('delete from commandes'));
+            $requete->where('idCmd', '?');
+            $requete->queryPrepare(array($idCmd));
+            $requete->liste(array('delete from produitcmd'));
+            $requete->where('idCmd', '?');
+            $requete->queryPrepare(array($idCmd));
         }
-        $requete->liste(array('delete from commandes'));
-        $requete->where('idCmd', '?');
-        $requete->queryPrepare(array($idCmd));
-        $requete->liste(array('delete from produitcmd'));
-        $requete->where('idCmd', '?');
-        $requete->queryPrepare(array($idCmd));
     }
 
     public function facturerCommande($commande){

@@ -18,16 +18,20 @@ class ClientModele extends Modele{
         $requete = new Requete('insert into clients');
         $requete->liste(array('idClient'),'(',')');
         $requete->liste(array('?'),'values(',')');
-        echo $requete->toString();
         $requete->queryPrepare(array($id));
     }
 
     public function deleteOneClient($client){
-        $requete = new Requete('delete');
-        $requete->liste(array('clients'), 'from');
-        $requete->where('idClient','?');
-        $requete->queryPrepare(array($client->getIdClient()));
-        unset($requete);
+        $requete = new Requete('select idClient from commandes where idClient = ?');
+        $rslt = $requete->queryPrepare(array($client->getIdClient()));
+        if (!$rslt){
+            $requete->liste(array('clients'), 'delete from');
+            $requete->where('idClient','?');
+            $requete->queryPrepare(array($client->getIdClient()));
+            unset($requete);
+        }else{
+            return false;
+        }
     }
 
     public function updateOneClient($client){

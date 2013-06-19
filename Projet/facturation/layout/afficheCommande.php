@@ -11,16 +11,16 @@ if ($this->getData('commandeModif')){
     $idCmd = $commande->getIdCmd();
     $date = $commande->getDateCmd();
     if (!$commande->getValidationCommande()){
-        echo '<form action="'._LIENDIR_.'">';
+        echo '<form id="com" action="'._LIENDIR_.'">';
     }else{
-        echo '<form action="">';
+        echo '<form id="com" action="">';
     }
 }else{
     //
     // Deuxième cas ou on rentre la première fois
     // on récupère des $_POST directement
     //
-    echo '<form action="'._LIENDIR_.'">';
+    echo '<form id="com" action="'._LIENDIR_.'">';
     $idCmd = $this->getData('newId');
     $date = $this->getData('dateCmd');
     //
@@ -38,64 +38,65 @@ if ($this->getData('commandeModif')){
     }
 }
 ?>
-<tr>
-    <td>Commande Numero : <?php echo $idCmd;?></td>
+    <p class="title">Commande Numero : <?php echo $idCmd;?></p>
 <?php
 //
 // Les 3 cas différent par rapport au client
 //
 if (isset($clients)){
-    echo '<td><select name="idClient">';
+    echo '<p>Client :<select name="idClient">';
     foreach ($clients as $valeur){
         echo '<option value="'.$valeur->getIdClient().'">'.strtoupper($valeur->getNomClient()).' '.$valeur->getPrenomClient().'</option>';
     }
-    echo '</select></td>';
+    echo '</select></p>';
 }elseif (isset($commande)){
-    echo '<td>Client :'.strtoupper($commande->getNomClient()).' '.$commande->getPrenomClient().'</td>';
+    echo '<p class="title">Client :'.strtoupper($commande->getNomClient()).' '.$commande->getPrenomClient().'</p>';
     echo '<input type="hidden" value="'.$commande->getIdClient().'" name="idClient">';
 }elseif (isset($idClient)){
-    echo '<td>Client :'.$idClient.'</td>';
+    echo '<p class="title">Client :'.$idClient.'</p>';
 }
 ?>
-    <td>Date Commande : <?php echo $date;?></td>
-    <td>Article  : <select name='idArticle'>
+    <p class="title">Date Commande : <?php echo $date;?></p>
+    <p class="title">Article  : <select name='idArticle'></p>
 <?php 
     //
     // Prépare le select avec la liste d'articles
     //
     foreach ($this->getData('articles') as $valeur){
-        echo '<option value="'.$valeur->getIdArticle().'">'.$valeur->getIdArticle().' ==> '.$valeur->getDesignation().'</option>';
+        echo '<option value="'.$valeur->getIdArticle().'">'.$valeur->getIdArticle().' ==> '.$valeur->getDesignation().' '.$valeur->getStock().' : '.$valeur->getStockTheorique().'</option>';
     }
 ?>
-</select></td>
+</select>
 <?php 
 //
 // L'idée était de mettre une restriction si la commande n'est pas valide
 // car devenu facture
 //
 if (isset($commande) && (!$commande->getValidationCommande())){
-    echo '<td>Quantité : <input name="qte" type="text"></td>';
+    echo '<p>Quantité : <input name="qte" type="text"></p>';
 }elseif (isset($idClient)){
-    echo '<td>Quantité : <input name"qte" type="text"></td>';
+    echo '<p>Quantité : <input name"qte" type="text"></p>';
 }elseif (isset($clients)){
-    echo '<td>Quantité : <input name="qte" type="text"></td>';
+    echo '<p>Quantité : <input name="qte" type="text"></p>';
 } ?>
-<td><input type="submit" value="Ajouter">
+
     <input type="hidden" value="<?php echo $idCmd; ?>" name="idCmd">
     <input type="hidden" value="<?php echo $date;?>" name="dateCmd">
     <input type="hidden" value="ajouterArticleComClient" name="action">
-    Acompte<input type="text" value="0" name="acompte"> 
+    <p>Acompte : <input type="text" value="0" name="acompte"></p>
 
 <?php if (isset($commande) && (!$commande->getValidationCommande())){
     echo 'NbPaiement<input type="text" value="'.$commande->getNbPaiement().'" name="nbPaiement">';
 }else{
     echo 'NbPaiement<input type="text" value="1" name="nbPaiement">';
 }?>
-</td></tr>
+<input type="submit" value="Ajouter">
 </form>
+<div id="grostab">
+<div id ="tab">
 <table class="tableau">
     <thead>
-        <th class="enteteListe"></th>
+        <th></th>
         <th class="enteteListe">Code Produit</th>
         <th class="enteteListe">Designation</th>
         <th class="enteteListe">PrixHT</th>
@@ -122,10 +123,11 @@ if (isset($articles)){
     }
 
 ?>
-    </tbody>
-</table>
+</tbody>
+</table></div>
+<div id="tabss">
 <table class="tableau">
-    <tr>
+<tr>
         <td class="enteteListe">TotalHT</td>
         <td><?php echo $sommeTotalHT;?></td>
     </tr>
@@ -136,18 +138,16 @@ if (isset($articles)){
     <tr>
         <td class="enteteListe">TotalTTC</td>
         <td><?php echo $sommeTotalHT + $totalTVA; ?></td>
-    </tr>
-</table>
+    </tr><tr><td>
 <?php
 }
 //
 // Le controle marche ici
 //
 if (isset($commande) && (!$commande->getValidationCommande())){?>
-<form action="<?php echo _LIENDIR_.'facturerCommande&idCmd='.$idCmd;?>">
+<form class="bouForm" action="<?php echo _LIENDIR_.'facturerCommande&idCmd='.$idCmd;?>">
     <input type="submit" value="Facturer" onclick="if(!confirm('Voulez-vous vraiment passer la commande <?php echo $idCmd;?> de l\'utilisateur <?php echo $commande->getNomClient();?> en facture ?')) return false;">    
 </form>
-<a href="<?php echo _LIENDIR_.'commandeClient';?>">Retour liste des commandes</a>
 <?php } ?>
 
 

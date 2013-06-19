@@ -64,6 +64,16 @@ class ClientsRepository extends Repository{
         return $clients;
     }
 
+    public function getByOrder($orderBy, $order){
+        $requete = new Requete('select '.$orderBy.',idClient');
+        $requete->liste(array('clients'), 'from');
+        $requete->liste(array('order by '.$orderBy.' '.$order));
+        $rslt = $requete->queryPrepare(array($orderBy, $order));
+        foreach ($rslt as $valeur){
+            $clients[$valeur->idClient] = $this->getOne($valeur->idClient);
+        }
+        return $clients;
+    }
     public function getByNomOrPrenom($whereSearch){
         $requete = new Requete('select idClient');
         $requete->liste(array('clients'), 'from');
@@ -72,7 +82,6 @@ class ClientsRepository extends Repository{
         $resultat = $requete->queryPrepare(array('%'.$whereSearch.'%',
                                                  '%'.$whereSearch.'%'));
         foreach ($resultat as $valeur){
-            echo $valeur->idClient;
             $clients[$valeur->idClient] = $this->getOne($valeur->idClient);
         }
         unset($requete);

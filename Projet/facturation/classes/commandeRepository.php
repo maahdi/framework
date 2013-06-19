@@ -16,57 +16,78 @@ class CommandeRepository extends Repository{
     public function getAll($articles, $client, $factOrCom){
         $commandes = $this->findAll('commandes','idCmd');
         $produitCmd = $this->findAll('produitcmd', 'idCmd');
-        $lastValue = '';
-        $index = array();
-        //
-        //On récupère les numéro de commandes uniques
-        //
-        foreach ($produitCmd as $valeur){
+        if ($produitCmd != false){
+            $lastValue = '';
+            $index = array();
             //
-            // 1. '' != '4000' -->les numero sont dans l'ordre normalement asc
-            // Ensuite dès que un change on met dans $index
-            // 
-            if ($lastValue != $valeur->idCmd){
-                $index[] = $valeur->idCmd;
-                $lastValue = $valeur->idCmd;
+            //On récupère les numéro de commandes uniques
+            //
+            foreach ($produitCmd as $valeur){
+                //
+                // 1. '' != '4000' -->les numero sont dans l'ordre normalement asc
+                // Ensuite dès que un change on met dans $index
+                // 
+                if ($lastValue != $valeur->idCmd){
+                    $index[] = $valeur->idCmd;
+                    $lastValue = $valeur->idCmd;
+                }
+                $listeProduit[] = $valeur;
             }
-            $listeProduit[] = $valeur;
-        }
-        //
-        //Pour chaque commande on instancie une nouvelle commande
-        //et on lui associe les articles correspondants
-        //
-        foreach ($index as $valeur){
-            $liste[$valeur] = new Commande($valeur);
-        }
-        foreach ($listeProduit as $valeur){
-            $liste[$valeur->idCmd]->setOneArticle($articles[$valeur->idArticle]);
-            $liste[$valeur->idCmd]->setQteCmd($valeur->idArticle, $valeur->qteCmd);
-        }
-        $format = 'd-m-Y';
-        $unValid = array();
-        $valid = array();
-        foreach ($commandes as $valeur){
-            $date = new DateTime($valeur->dateCmd);
-            $liste[$valeur->idCmd]->setDateCmd($date->format($format));
-            $liste[$valeur->idCmd]->setClient($client[$valeur->idClient]);
-            if ($valeur->valid == 1){
-                $liste[$valeur->idCmd]->setValidation();
-                $valid[$valeur->idCmd] = $valeur->idCmd;
-            }else{
-                $unValid [$valeur->idCmd] = $valeur->idCmd;
+            //
+            //Pour chaque commande on instancie une nouvelle commande
+            //et on lui associe les articles correspondants
+            //
+            foreach ($index as $valeur){
+                $liste[$valeur] = new Commande($valeur);
             }
-            $liste[$valeur->idCmd]->setTotaux();
-            $liste[$valeur->idCmd]->setAcompte($valeur->acompte);
-            $liste[$valeur->idCmd]->setNbPaiement($valeur->nbPaiement);
+            foreach ($listeProduit as $valeur){
+                $liste[$valeur->idCmd]->setOneArticle($articles[$valeur->idArticle]);
+                $liste[$valeur->idCmd]->setQteCmd($valeur->idArticle, $valeur->qteCmd);
+            }
+            $format = 'd-m-Y';
+            $unValid = array();
+            $valid = array();
+            foreach ($commandes as $valeur){
+                $date = new DateTime($valeur->dateCmd);
+                $liste[$valeur->idCmd]->setDateCmd($date->format($format));
+                $liste[$valeur->idCmd]->setClient(@$client[$valeur->idClient]);
+                if ($valeur->valid == 1){
+                    $liste[$valeur->idCmd]->setValidation();
+                    $valid[$valeur->idCmd] = $valeur->idCmd;
+                }else{
+                    $unValid [$valeur->idCmd] = $valeur->idCmd;
+                }
+                $liste[$valeur->idCmd]->setTotaux();
+                $liste[$valeur->idCmd]->setAcompte($valeur->acompte);
+                $liste[$valeur->idCmd]->setNbPaiement($valeur->nbPaiement);
+            }
+            return $this->checkValid($liste, $unValid, $valid, $factOrCom);
+        }else{
+            return false;
         }
-        return $this->checkValid($liste, $unValid, $valid, $factOrCom);
     }
 
     //
     //$factOrCom = 'fact' ou 'com'
     //pour facture ou commande
     //
+
+    public function getByOrder($orderBy, $order, $factOrCom){
+        $requete = new Requete('select '.$orderBy.',idCmd');
+        $requete->liste(array('commandes'), 'from');
+        if ($factOrCom == 'com'){
+            $requete->where('valid','0');
+        }else{
+            $requete->where('valid', '1');
+        }
+        $requete->liste(array('order by '.$orderBy.' '.$order));
+        $rslt = $requete->queryPrepare(array($orderBy, $order));
+        foreach ($rslt as $valeur){
+            $clients[] = $valeur->idCmd;
+        }
+        return $clients;
+    }
+
     public function getOne($idCmd, array $articles, array $client, $factOrCom){
         $requete = new Requete('select');
         $listeChamp = array ('idCmd',
@@ -205,7 +226,6 @@ class CommandeRepository extends Repository{
     public function insertOne($commande){
         $format = 'Y-m-d H:i:s';
         $date = new DateTime($commande->getDateCmd());
-        echo $date->format($format);
         $requete = new Requete('insert into');
         $requete->liste(array('commandes'));
         $requete->liste(array('idCmd','idClient', 'dateCmd','totalHT', 'totalTVA', 'totalTTC', 'acompte', 'nbPaiement', 'sommePayed'),'(',')');

@@ -8,26 +8,49 @@ if ($this->getData('listeCommande') != false){
 }else{
     $liste = false;
 }
-
 if ($liste != false){
-    $action = 'afficheListeCommande&tri=';
-    $image = '../images/boutonTri.png';?>
-    <thead class="enteteListe">
-<?php  
-    echo '<th class="enteteListe">Numero<a href="'._LIENDIR_.$action.'idClient" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
-    echo '<th class="enteteListe">Date Creation<a href="'._LIENDIR_.$action.'nomClient" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
-    echo '<th class="enteteListe" >Nom Client<a href="'._LIENDIR_.$action.'prenomClient" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
-    echo '<th class="enteteListe">TotalHT<a href="'._LIENDIR_.$action.'adresseClient" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
-    echo '<th class="enteteListe">TVA<a href="'._LIENDIR_.$action.'cpClient" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
-    echo '<th class="enteteListe">TotalTTC<a href="'._LIENDIR_.$action.'idPays" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
-    echo '<th class="enteteListe">Articles<a href="'._LIENDIR_.$action.'idPays" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
+    $champ = array('idCmd', 'dateCmd', 'nomClient', 'totalHT', 'totalTVA', 'totalTTC', 'articles');
+    $nom = array('Code', 'Date','Nom Client', 'Total HT' , 'TVA', 'Total TTC', 'Articles');
+    $i = 0;
+    echo '<thead class="enteteListe">';
+    foreach ($champ as $valeur){
+        if ($valeur == $this->getData('champ')){
+            if ($this->getData('tri') == 'desc'){
+                $tri = 'Desc';
+                $image = '../images/boutonTri_DESC.png';
+            }else{
+                $tri = 'Asc';
+                $image = '../images/boutonTri.png';
+            }
+        }else{
+            $tri = 'Asc';
+            $image = '../images/boutonTri.png';
+        }
+        $action = 'triCommande'.$tri.'&champ=';
+        if ($valeur == 'nomClient' || $valeur == 'articles'){
+            echo '<th class="enteteListe">'.$nom[$i].'</th>';
+        }else{
+            echo '<th class="enteteListe"><a href="'._LIENDIR_.$action.$valeur.'">';
+            echo '<img src="'.$image.'" border="0">'.$nom[$i].'</a></th>';
+        }
+        $i++;
+    }
+
+    //<?php  
+    //echo '<th class="enteteListe">Numero<a href="'._LIENDIR_.$action.'idClient" >';
+    //    echo '<img src="'.$image.'" border="0"></a></th>';
+    //echo '<th class="enteteListe">Date Creation<a href="'._LIENDIR_.$action.'nomClient" >';
+    //    echo '<img src="'.$image.'" border="0"></a></th>';
+    //echo '<th class="enteteListe" >Nom Client<a href="'._LIENDIR_.$action.'prenomClient" >';
+    //    echo '<img src="'.$image.'" border="0"></a></th>';
+    //echo '<th class="enteteListe">TotalHT<a href="'._LIENDIR_.$action.'adresseClient" >';
+    //    echo '<img src="'.$image.'" border="0"></a></th>';
+    //echo '<th class="enteteListe">TVA<a href="'._LIENDIR_.$action.'cpClient" >';
+    //    echo '<img src="'.$image.'" border="0"></a></th>';
+    //echo '<th class="enteteListe">TotalTTC<a href="'._LIENDIR_.$action.'idPays" >';
+    //    echo '<img src="'.$image.'" border="0"></a></th>';
+    //echo '<th class="enteteListe">Articles<a href="'._LIENDIR_.$action.'idPays" >';
+    //    echo '<img src="'.$image.'" border="0"></a></th>';
 ?>
         <th class="enteteListefin"></th>
         <th class="enteteListefin"></th></thead>
@@ -35,7 +58,7 @@ if ($liste != false){
 <?php $i = 1;
 foreach ($liste as $valeur){
     $id = $valeur->getIdCmd();
-    echo '<td style="width:10%;">'.$valeur->getIdCmd().'</td>';
+    echo '<tr><td style="width:10%;">'.$valeur->getIdCmd().'</td>';
     echo "<td class='texte' >".$valeur->getDateCmd()."</td>";
     echo "<td class='texte' >".$valeur->getNomClient()."</td>";
     echo "<td class='texte' >".round($valeur->getTotalHT(),3)."</td>";
@@ -49,7 +72,7 @@ foreach ($liste as $valeur){
             '" onclick="if(!confirm(\"Voulez-vous vraiment supprimer la commande '.$valeur->getIdCmd().'\n
            de l\'utilisateur '.$valeur->getNomClient().' ?\")) return false;">supprimer</a></td></tr>';
     }else{
-        echo '<td><a href="'._LIENDIR_.'voirFacture&idCmd='.$id.'">Visualiser</a></td>';
+        echo '<td><a href="'._LIENDIR_.'voirFacture&idCmd='.$id.'">Visualiser</a></td></tr>';
     }
     $i++;
 }

@@ -15,8 +15,44 @@ class StockController extends Controller{
     
     public function renderStock(){
         $this->view->setData(array('tableauStock'=> true));
-        $fournisseurs = $this->getRepository('fournisseurs')->getAll();       
-        $data['listeArticles'] = $this->getRepository('articles')->getAll($fournisseurs);
+        //$fournisseurs = $this->getRepository('fournisseurs')->getAll();       
+        $data['listeArticles'] = &$this->getRepository('articles')->getAll();
         $this->view->render(_DIR_.'Projet/stock/layout/pageArticle.php', $data);
+    }
+
+    public function triArticleOrderByDesc(){
+        $this->setData(array('tri' => 'asc',
+                             'champ' => $_GET['champ'],
+                             'tableauStock' => true));
+        $data['listeArticles'] = $this->getRepository('articles')->getByOrder($_GET['champ'],'DESC');
+        $this->view->render(_DIR_.'Projet/stock/layout/pageArticle.php', $data);
+    }
+
+    public function triArticleOrderByAsc(){
+        $this->setData(array('tri' => 'desc',
+                             'champ' => $_GET['champ'],
+                             'tableauStock' => true));
+        $data['listeArticles'] = $this->getRepository('articles')->getByOrder($_GET['champ'],'ASC');
+        $this->view->render(_DIR_.'Projet/stock/layout/pageArticle.php', $data);
+    }
+
+    public function suppressionStockArticle(){
+        $this->modele->suppressionOneStock($_GET['idArticle']);
+        $this->renderStock();
+    }
+
+    public function ajoutStockArticle(){
+        $this->modele->ajoutOneStock($_GET['idArticle']);
+        $this->renderStock();
+    }
+
+    public function displayStockNeg(){
+        $id = $this->modele->getStockNeg();
+        foreach ($id as $valeur){
+            $a[$valeur] = &$this->getRepository('articles')->getOne($valeur);
+        }
+        $this->setData(array('tableauStock' => true,
+                             'listeArticles' => $a));
+        $this->view->render(_DIR_.'Projet/stock/layout/pageArticle.php');
     }
 }

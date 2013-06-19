@@ -1,40 +1,61 @@
 <h1>Liste des Articles</h1>
     <table class="tableau">
-        
 <?php 
 if ($this->getData('listeArticles') != false){
-    $action = 'afficheListeArticle&tri=';
-    $image = '../images/boutonTri.png';
+    $champ = array('idArticle', 'refArticle', 'designation', 'prixHT', 'txTVA', 'prixTTC', 'stock', 'stockTheorique', 'idFournisseur');
+    $nom = array('Code', 'Reference','Designation', 'Prix HT' , 'TVA', 'prix TTC', 'Stock', 'Stock Theorique', 'Fournisseur');
+    $i = 0;
+    echo '<thead class="enteteListe">';
+    foreach ($champ as $valeur){
+        if ($valeur == $this->getData('champ')){
+            if ($this->getData('tri') == 'desc'){
+                $tri = 'Desc';
+                $image = '../images/boutonTri_DESC.png';
+            }else{
+                $tri = 'Asc';
+                $image = '../images/boutonTri.png';
+            }
+        }else{
+            $tri = 'Asc';
+            $image = '../images/boutonTri.png';
+        }
+        $action = 'triArticle'.$tri.'&champ=';
+        if ($valeur == 'idFournisseur' || $valeur == 'prixTTC'){
+            echo '<th class="enteteListe">'.$nom[$i].'</th>';
+        }else{
+            echo '<th class="enteteListe"><a href="'._LIENDIR_.$action.$valeur.'">';
+            echo '<img src="'.$image.'" border="0">'.$nom[$i].'</a></th>';
+        }
+        $i++;
+    }
 ?>
-<thead class='enteteListe'>
 <?php 
-    echo "<th class='enteteListe'>CodeArticle<a href='"._LIENDIR_.$action."idArticle' >";
-        echo "<img src='".$image."' border='0'></a></th>";
-    echo "<th class='enteteListe'>Référence <a href='"._LIENDIR_.$action."refArticle' >";
-        echo "<img src='".$image."' border='0'></a></th>";
-    echo "<th class='enteteListe'>Désignation <a href='"._LIENDIR_.$action."DesignationArticle' >";
-        echo "<img src='".$image."' border='0'></a></th>";
-    echo "<th class='enteteListe'>Prix HT <a href='"._LIENDIR_.$action."prixHT' >";
-        echo "<img src='".$image."' border='0'></a></th>";
-    echo "<th class='enteteListe'>TVA <a href='"._LIENDIR_.$action."txTVA' >";
-        echo "<img src='".$image."' border='0'></a></th>";
-    echo "<th class='enteteListe'>Prix TTC <a href='"._LIENDIR_.$action."prixTTC' >";
-        echo "<img src='".$image."' border='0'></a></th>";
-    echo "<th class='enteteListe'>Stock <a href='"._LIENDIR_.$action."stock' >";
-        echo "<img src='".$image."' border='0'></a></th>";
-    echo "<th class='enteteListe'>Stock Theo. <a href='"._LIENDIR_.$action."stockTheorique' >";
-        echo "<img src='".$image."' border='0'></a></th>";
-    echo "<th class='enteteListe'>Fournisseur <a href='"._LIENDIR_.$action."nomFournisseur' >";
-        echo "<img src='".$image."' border='0'></a></th>";
-?>
-        <th class='enteteListeFin'></th>
-        <th class='enteteListeFin'></th>
+//    echo "<th class='enteteListe'>CodeArticle<a href='"._LIENDIR_.$action."idArticle' >";
+//        echo "<img src='".$image."' border='0'></a></th>";
+//    echo "<th class='enteteListe'>Référence <a href='"._LIENDIR_.$action."refArticle' >";
+//        echo "<img src='".$image."' border='0'></a></th>";
+//    echo "<th class='enteteListe'>Désignation <a href='"._LIENDIR_.$action."DesignationArticle' >";
+//        echo "<img src='".$image."' border='0'></a></th>";
+//    echo "<th class='enteteListe'>Prix HT <a href='"._LIENDIR_.$action."prixHT' >";
+//        echo "<img src='".$image."' border='0'></a></th>";
+//    echo "<th class='enteteListe'>TVA <a href='"._LIENDIR_.$action."txTVA' >";
+//        echo "<img src='".$image."' border='0'></a></th>";
+//    echo "<th class='enteteListe'>Prix TTC <a href='"._LIENDIR_.$action."prixTTC' >";
+//        echo "<img src='".$image."' border='0'></a></th>";
+//    echo "<th class='enteteListe'>Stock <a href='"._LIENDIR_.$action."stock' >";
+//        echo "<img src='".$image."' border='0'></a></th>";
+//    echo "<th class='enteteListe'>Stock Theo. <a href='"._LIENDIR_.$action."stockTheorique' >";
+//        echo "<img src='".$image."' border='0'></a></th>";
+//    echo "<th class='enteteListe'>Fournisseur <a href='"._LIENDIR_.$action."nomFournisseur' >";
+//        echo "<img src='".$image."' border='0'></a></th>";
+//?>
     </thead>
 <tbody>
 <?php
 if ($this->getData('listeArticles')){
     $i = 0;
     foreach ($this->getData('listeArticles') as $key => $valeur){
+        echo '<tr>';
         $id = $valeur->getIdArticle();
         echo "<td>".$valeur->getIdArticle()."</td>";
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'refArticle', 'texte',".$i.",'articles')\">".$valeur->getRefArticle()."</td>";
@@ -50,17 +71,15 @@ if ($this->getData('listeArticles')){
         echo "<td class='texte' ondblclick=\"inlineMod(".$id.",this , 'stockTheorique', 'float',".$i.",'articles')\">".$valeur->getStockTheorique()."</td>";
 
         echo "<td class='texte'>".$valeur->getNomFournisseur()."</td>";
-        echo "<td class='enteteListefin'><a href='"._LIENDIR_."afficheListeArticle&idArticle=".$key."'>modifier</a></td>";
-        echo "<td class='enteteListefin'><a href='"._LIENDIR_."deleteArticle&idArticle=".$key.
-            "' onclick=\"if(!confirm('Voulez-vous vraiment supprimer l\'article ".$valeur->getIdArticle()." ?')) return false;\">supprimer</a></td></tr>";
         $i++;
     }
 }
 ?>
     </tbody>
 </table>
+<?php
 
-<?php }else{
+ }else{
         echo "<div id='notfound'><h2>Pas d'enregistrement trouvé pour : ".$_REQUEST['search']."</h2>";
         echo "<a href='"._LIENDIR_."afficheListeArticle'>Retour</a></div>";
     }

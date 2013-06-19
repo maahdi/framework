@@ -1,26 +1,47 @@
 <h1>Liste des clients</h1>
 <table class="tableau">
 <?php 
-$order = $this->getData('order');
 if ($this->getData('listeClient') != false){
-    $action = 'afficheListeClient&tri=';
-    $image = '../images/boutonTri.png';
-?>
-    <thead class="enteteListe">
-<?php
-    echo '<th class="enteteListe"><ul><li>CodeClient</li><li><a href="'._LIENDIR_.$action.'idClient" >';
-        echo '<img src="'.$image.'" border="0"></a></li></ul></th>';
-    echo '<th class="enteteListe">Nom <a href="'._LIENDIR_.$action.'nomClient" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
-    echo '<th class="enteteListe" >Prenom <a href="'._LIENDIR_.$action.'prenomClient" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
-    echo '<th class="enteteListe" >Courriel <a href="'._LIENDIR_.$action.'emailClient" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
-    echo '<th class="enteteListe">Adresse <a href="'._LIENDIR_.$action.'adresseClient" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
-    echo '<th class="enteteListe">Code Postal <a href="'._LIENDIR_.$action.'cpClient" >';
-        echo '<img src="'.$image.'" border="0"></a></th>';
-    echo '<th class="enteteListe">Pays <a href="'._LIENDIR_.$action.'idPays" ><img src="'.$image.'" border="0"></a></th>';
+    $champ = array('idClient', 'nomClient', 'prenomClient', 'emailClient', 'adresseClient', 'cpClient', 'idPays');
+    $nom = array('Code', 'Nom', 'Prenom' , 'Courriel', 'Adresse', 'Code Postal', 'Pays');
+    $i = 0;
+    echo '<thead class="enteteListe">';
+    foreach ($champ as $valeur){
+        if ($valeur == $this->getData('champ')){
+            if ($this->getData('tri') == 'desc'){
+                $tri = 'Desc';
+                $image = '../images/boutonTri_DESC.png';
+            }else{
+                $tri = 'Asc';
+                $image = '../images/boutonTri.png';
+            }
+        }else{
+            $tri = 'Asc';
+            $image = '../images/boutonTri.png';
+        }
+        $action = 'triClient'.$tri.'&champ=';
+        if ($valeur == 'idPays'){
+            echo '<th class="enteteListe">'.$nom[$i].'</th>';
+        }else{
+            echo '<th class="enteteListe"><a href="'._LIENDIR_.$action.$valeur.'">';
+            echo '<img src="'.$image.'" border="0">'.$nom[$i].'</a></th>';
+        }
+
+        $i++;
+    }
+    //echo '<th class="enteteListe"><a href="'._LIENDIR_.$action.'idClient" >';
+    //    echo '<img src="'.$image.'" border="0">CodeClient</a></th>';
+    //echo '<th class="enteteListe"><a href="'._LIENDIR_.$action.'nomClient" >';
+    //    echo '<img src="'.$image.'" border="0">Nom</a></th>';
+    //echo '<th class="enteteListe" ><a href="'._LIENDIR_.$action.'prenomClient" >';
+    //    echo '<img src="'.$image.'" border="0">Prenom</a></th>';
+    //echo '<th class="enteteListe" ><a href="'._LIENDIR_.$action.'emailClient" >';
+    //    echo '<img src="'.$image.'" border="0">Courriel</a></th>';
+    //echo '<th class="enteteListe"><a href="'._LIENDIR_.$action.'adresseClient" >';
+    //    echo '<img src="'.$image.'" border="0">Adresse</a></th>';
+    //echo '<th class="enteteListe"><a href="'._LIENDIR_.$action.'cpClient" >';
+    //    echo '<img src="'.$image.'" border="0">Code Postal</a></th>';
+    //echo '<th class="enteteListe"><a href="'._LIENDIR_.$action.'idPays" ><img src="'.$image.'" border="0">Pays</a></th>';
 ?>
         <th class="enteteListefin"></th>
         <th class="enteteListefin"></th>
@@ -67,7 +88,7 @@ if ($this->getData('listeClient') != false){
     </table>
 
 <?php }else{
-    echo '<div id=\'notfound\'><h2>Pas d\'enregistrement trouvé pour : '.$_REQUEST['search'].'</h2>';
+    echo '<div id=\'notfound\'><h2>Pas d\'enregistrement trouvé </h2>';
     if (!$this->getData('newSearch')){
         echo '<a href=\''._LIENDIR_.'gestionClient\'>Retour</a></div>';       
     }else{

@@ -67,12 +67,8 @@ class FacturationClientController extends Controller{
     // Retourne un Objet
     //
     private function getOneCommande($idCmd, $factOrCom){
-        //$pays = $this->getRepository('pays')->getAll();
         $clients = $this->getRepository('clients')->getAll();
-        //unset($pays);
-        //$fournisseurs = $this->getRepository('fournisseurs')->getAll();
         $articles = $this->getRepository('articles')->getAll();
-        //unset($fournisseurs);
         return $this->getRepository('commande')->getOne($idCmd, $articles, $clients, $factOrCom);
     }
 
@@ -107,12 +103,8 @@ class FacturationClientController extends Controller{
         //
         //Récupération des repository pour enregistrer mon objet Commande
         //
-        //$fournisseur = $this->getRepository('fournisseurs')->getAll();
         $article = $this->getRepository('articles')->getAll ();
-        //unset($fournisseur);
-        //$pays = $this->getRepository('pays')->getAll();
         $client = $this->getRepository('clients')->getOne($_GET['idClient']);
-        //unset($pays);
         $commande->setDateCmd($_GET['dateCmd']);
         $commande->setOneArticle($article[$_GET['idArticle']]);
         $commande->setQteCmd($_GET['idArticle'],$_GET['qte']);
@@ -122,7 +114,7 @@ class FacturationClientController extends Controller{
         $commande->setNbPaiement($_GET['nbPaiement']);
     }
 
-    public function ajouterArticle($suppression = null){
+    public function ajouterArticle(){
         if (is_file($this->urlCommande)){
             //
             // Inclusion des fichiers pour récupérer l'objet Commande entier
@@ -173,16 +165,43 @@ class FacturationClientController extends Controller{
         if (is_file($this->urlCommande)){
             unlink($this->urlCommande);
         }
-        //$pays             = $this->getRepository('pays')->getAll();
         $data['clients']  = $this->getRepository('clients')->getAll();
-        //unset($pays);
-        //$fournisseurs     = $this->getRepository('fournisseurs')->getAll();
         $data['articles'] = $this->getRepository('articles')->getAll();
-        //unset($fournisseurs);
         $this->view->setData($this->getNewId());
         $this->view->setData(array('afficherCommande'   => true,
                                    'dateCmd'            => date('d-m-Y')));
         $this->view->render($this->url, $data); 
+    }
+
+    public function triCommandeOrderByDesc(){
+        $this->setData(array('tri' => 'asc',
+                             'champ' => $_GET['champ'],
+                             'liste' => true));
+        $idCmd = $this->getRepository('commande')->getByOrder($_GET['champ'],'DESC', 'com');
+        foreach ($idCmd as $valeur){
+            $clients[$valeur] = $this->getOneCommande($valeur, 'com');
+        }
+        $data['listeCommande'] = $clients;
+        $this->view->render($this->url, $data);
+    }
+
+    public function triCommandeOrderByAsc(){
+        $this->setData(array('tri' => 'desc',
+                             'champ' => $_GET['champ'],
+                             'liste' => true));
+        $idCmd = $this->getRepository('commande')->getByOrder($_GET['champ'],'ASC', 'com');
+        foreach ($idCmd as $valeur){
+            $clients[] = $this->getOneCommande($valeur, 'com');
+        }
+        foreach ($clients as $valeur){
+            $liste = $valeur;
+            $key = array_keys($liste); 
+            foreach ($key as $k){
+                $listeFinale[$k] = $liste[$k];
+            }
+        }
+        $data['listeCommande'] = $listeFinale;
+        $this->view->render($this->url, $data);
     }
 
     public function deleteCommande(){

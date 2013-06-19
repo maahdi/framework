@@ -1,7 +1,7 @@
 <?php
 $facture = $this->getData('facture');
 ?>
-<table>
+<table id="fact">
 <tr>
 <td>Numero de la facture : <?php echo $facture->getIdCmd();?></td>
 <td>Date : <?php echo $facture->getDateCmd();?></td>
@@ -37,6 +37,7 @@ foreach ($facture->getListeArticle() as $valeur){
 ?>
     </tbody>
 </table>
+<div id="tabss">
 <table class="tableau">
     <tr>
         <td class="enteteListe">TotalHT</td>
@@ -50,4 +51,4 @@ foreach ($facture->getListeArticle() as $valeur){
         <td class="enteteListe">TotalTTC</td>
         <td><?php echo $sommeTotalHT + $totalTVA; ?></td>
     </tr>
-</table>
+</table></div>

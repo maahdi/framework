@@ -32,6 +32,14 @@ class ArticlesRepository extends Repository{
     //    return $article;
     //}
 
-    public function updateOne($listeValeur){
+    public function getByOrder($orderBy, $order){
+        $requete = new Requete('select '.$orderBy.',idArticle');
+        $requete->liste(array('articles'), 'from');
+        $requete->liste(array('order by '.$orderBy.' '.$order));
+        $rslt = $requete->queryPrepare(array($orderBy, $order));
+        foreach ($rslt as $valeur){
+            $clients[$valeur->idArticle] = $this->getOne($valeur->idArticle);
+        }
+        return $clients;
     }
 }

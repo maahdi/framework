@@ -24,7 +24,12 @@ class Repository{
         $requete->setAscOrder();
         $retour = $requete->query();
         unset($requete);
-        return $retour;
+        if ($retour->rowCount() >0){
+            return $retour;    
+        }else{
+            return false;
+        }
+        
     }
 
     public function &getAll(){
@@ -64,7 +69,7 @@ class Repository{
                         $liste[$valeur->$primary][$champ] = &$this->repositoryFinder->getAnotherRepo($tableJointe)->getOne($id->$foreignKey);
                     }
                 }else{
-                    $liste[$valeur->$primary][$champ] = $valeur->$champ;                   
+                    $liste[$valeur->$primary][$champ] = stripslashes($valeur->$champ);                   
                 }
                 $primaryKey[] = $valeur->$primary;
             }
@@ -162,7 +167,7 @@ class Repository{
                         $liste[$data['nom']][$tableJointe] = &$this->repositoryFinder->getAnotherRepo($tableJointe)->getOne($key->$foreignKey);
                     }
                 }else{
-                    $liste[$data['nom']][$champ] = $valeur->$champ;
+                    $liste[$data['nom']][$champ] = stripslashes($valeur->$champ);
                 }
             }
         }

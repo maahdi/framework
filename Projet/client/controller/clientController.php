@@ -115,7 +115,7 @@ class ClientController extends Controller{
                                       'emailClient'   => 'email',
                                       'prenomClient'  => 'texte', 
                                       'adresseClient' => 'texte', 
-                                      'nomPays'       => 'texte'), $_POST, $this);
+                                      'nomPays'       => 'texte,obligatoire'), $_POST, $this);
         if ($this->getFormValid()){
             if (!$pays = $this->getRepository('pays')->getBy(strtoupper($_POST['nomPays']),'nomPays')){
                 //
@@ -139,12 +139,30 @@ class ClientController extends Controller{
         }
     }
 
+    public function triClientOrderByDesc(){
+        $this->setData(array('tri' => 'asc',
+                             'champ' => $_GET['champ'],
+                             'liste' => true));
+        $data['listeClient'] = $this->getRepository('clients')->getByOrder($_GET['champ'],'DESC');
+        $data['listePays'] = $this->pays;
+        $this->view->render($this->url, $data);
+    }
+
+    public function triClientOrderByAsc(){
+        $this->setData(array('tri' => 'desc',
+                             'champ' => $_GET['champ'],
+                             'liste' => true));
+        $data['listeClient'] = $this->getRepository('clients')->getByOrder($_GET['champ'],'ASC');
+        $data['listePays'] = $this->pays;
+        $this->view->render($this->url, $data);
+    }
+
     public function enregistrementModificationClient(){
         $c = new FormValidation(array('nomClient'     => 'texte, obligatoire',
                                       'cpClient'      => 'codePostal', 
                                       'prenomClient'  => 'texte,obligatoire', 
                                       'adresseClient' => 'alphaNum', 
-                                      'nomPays'       => 'texte',
+                                      'nomPays'       => 'texte,obligatoire',
                                       'emailClient'   => 'email'), $_POST, $this);
 
         if ($this->getFormValid()){
@@ -172,12 +190,13 @@ class ClientController extends Controller{
     }
 
     public function deleteClient(){
-        $client = $this->getRepository('clients')->getOne($_GET['idClient'], $this->pays);
+        $client = &$this->getRepository('clients')->getOne($_GET['idClient'], $this->pays);
         if ($client != false){
             $this->modele->deleteOneClient($client);
             $this->view->setData(array('listeClient' => array($client->getIdClient() => $client),
                                        'liste'       => true,
-                                       'listePays'   => $this->pays));
+                                       'listePays'   => $this->pays,
+                                       'retour' => true));
             $this->view->turnOffAjax();
             $this->view->render($this->url);
         }else{

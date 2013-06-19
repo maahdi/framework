@@ -13,7 +13,6 @@
 }else{
     echo '<li><a href=\''._LIENDIR_.'renderAdvancedSearchClient\'>Nouvelle Recherche</a></li>';
 }
-    echo '<li><a href=\''._LIENDIR_.'suiviClient\'>Suivi client</a></li>';
 
 
 ?>
